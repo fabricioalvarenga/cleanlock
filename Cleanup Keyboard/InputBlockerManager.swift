@@ -9,11 +9,6 @@ import Foundation
 import Quartz
 
 class InputBlockerManager: ObservableObject {
-    enum peripheral {
-        case keyboard
-        case trackpad
-    }
-
     @Published var isKeyboardBlocked = false
     @Published var isTrackpadBlocked = false
 
@@ -21,7 +16,7 @@ class InputBlockerManager: ObservableObject {
     private var timer: Timer? = nil
     private var keyboardMonitor: CFMachPort?
     private var trackpadMonitor: CFMachPort?
-    
+
     func configureKeyboardState() {
         if isKeyboardBlocked {
             print("Teclado bloqueado...")

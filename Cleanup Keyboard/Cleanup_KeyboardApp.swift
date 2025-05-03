@@ -14,6 +14,6 @@ struct Cleanup_KeyboardApp: App {
             ContentView()
                 .frame(minWidth: 500, minHeight: 400)
         }
-        .windowStyle(HiddenTitleBarWindowStyle())
+        .windowStyle(.hiddenTitleBar)
     }
 }
