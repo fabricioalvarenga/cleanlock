@@ -35,15 +35,19 @@ struct ContentView: View {
                 Section("Configurações") {
                     Toggle("Bloquear Teclado", systemImage: "keyboard", isOn: $inputManager.isKeyboardLocked)
                         .toggleStyle(.switch)
-                        .onChange(of: inputManager.isKeyboardLocked) { 
-                            inputManager.configureKeyboardState()
-                        }
 
                     Toggle("Bloquear Trackpad/Mouse", systemImage: "rectangle.and.hand.point.up.left", isOn: $inputManager.isTrackpadLocked)
                         .toggleStyle(.switch)
-                        .onChange(of: inputManager.isTrackpadLocked) {
-                            inputManager.configureTrackpadState()
+                    
+                    HStack {
+                        Spacer()
+                        Button("Iniciar Limpeza") {
+                            inputManager.startCleaning()
                         }
+                        .buttonStyle(.borderedProminent)
+                        Spacer()
+                    }
+                    .disabled((!inputManager.isKeyboardLocked && !inputManager.isTrackpadLocked) || inputManager.isCleaning)
                 }
             }
             .formStyle(.grouped)
@@ -51,10 +55,10 @@ struct ContentView: View {
         .onAppear {
             checkAccessibilityPermissions()
         }
-       .onChange(of: inputManager.areBothShiftKeysPressed) { _, bothShiftKeysPressed in
-            if bothShiftKeysPressed {
-                inputManager.isKeyboardLocked = false
-            }
+       .onChange(of: inputManager.areBothShiftKeysPressed) { _, pressed in
+           if pressed {
+               inputManager.stopCleaning()
+           }
         }
         .alert(isPresented: $showAlert) {
             Alert(

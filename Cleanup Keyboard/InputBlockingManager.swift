@@ -11,7 +11,7 @@ import Combine
 
 // Esta função de callback deve ficar fora do escopo da classe ou o seguinte erro aparecerá:
 // A C function pointer can only be formed from a reference to a 'func' or a literal closure
-func tapEventCallback(proxy: CGEventTapProxy,
+func keyboardTapEventCallback(proxy: CGEventTapProxy,
                       type: CGEventType,
                       event: CGEvent,
                       refcon: UnsafeMutableRawPointer?) -> Unmanaged<CGEvent>? {
@@ -39,18 +39,40 @@ func tapEventCallback(proxy: CGEventTapProxy,
         }
     }
     
+    if !monitor.isKeyboardLocked {
+        return Unmanaged.passRetained(event)
+    }
+    
+    return nil
+}
+
+// Esta função de callback deve ficar fora do escopo da classe ou o seguinte erro aparecerá:
+// A C function pointer can only be formed from a reference to a 'func' or a literal closure
+func trackpadTapEventCallback(proxy: CGEventTapProxy,
+                      type: CGEventType,
+                      event: CGEvent,
+                      refcon: UnsafeMutableRawPointer?) -> Unmanaged<CGEvent>? {
+    guard let refcon = refcon else {
+        return Unmanaged.passRetained(event)
+    }
+    
+    let monitor = Unmanaged<InputBlockingManager>.fromOpaque(refcon).takeUnretainedValue()
+    
+    if !monitor.isTrackpadLocked {
+        return Unmanaged.passRetained(event)
+    }
+    
     return nil
 }
 
 class InputBlockingManager: ObservableObject {
-    @Published var isKeyboardLocked = false
-    @Published var isTrackpadLocked = false
+    @Published var isCleaning = false
+    @Published var isKeyboardLocked = true
+    @Published var isTrackpadLocked = true
     @Published var isLeftShiftKeyPressed = false
     @Published var isRightShiftKeyPressed = false
     @Published var areBothShiftKeysPressed = false
 
-    private var countdown = 30
-    private var timer: Timer? = nil
     private var keyboardTapLockEvent: CFMachPort?
     private var trackpadTapLockEvent: CFMachPort?
     private var shiftKeysTapEvent: CFMachPort?
@@ -64,54 +86,40 @@ class InputBlockingManager: ObservableObject {
     }
     
     deinit {
-        unlockKeyboard()
-        unlockTrackpad()
-    }
-
-    func configureKeyboardState() {
-        if isKeyboardLocked {
-            print("Teclado bloqueado...")
-            lockKeyboard()
-            startCountdown()
-        } else {
-            print("Teclado desbloqueado...")
-            unlockKeyboard()
-        }
-    }
-
-    func configureTrackpadState() {
-        if isTrackpadLocked {
-            print("Trackpad bloqueado...")
-            lockTrackpad()
-            startCountdown()
-        } else {
-            print("Trackpad desbloqueado...")
-            unlockTrackpad()
-        }
+        stopKeyboardMonitoring()
+        stopTrackpadMonitoring()
     }
     
-    private func lockKeyboard() {
+    func startCleaning() {
+        isCleaning = true
+        startKeyboardMonitoring()
+        startTrackpadMonitoring()
+    }
+    
+    func stopCleaning() {
+        isCleaning = false
+        stopKeyboardMonitoring()
+        stopTrackpadMonitoring()
+    }
+   
+    private func startKeyboardMonitoring() {
         let eventMask = CGEventMask(1 << CGEventType.keyDown.rawValue) |
-                        CGEventMask(1 << CGEventType.keyUp.rawValue) |
-                        CGEventMask(1 << CGEventType.flagsChanged.rawValue)
+        CGEventMask(1 << CGEventType.keyUp.rawValue) |
+        CGEventMask(1 << CGEventType.flagsChanged.rawValue)
         
         keyboardTapLockEvent = CGEvent.tapCreate(tap: .cgSessionEventTap,
                                                  place: .headInsertEventTap,
                                                  options: .defaultTap,
                                                  eventsOfInterest: eventMask,
-                                                 callback: tapEventCallback,
+                                                 callback: keyboardTapEventCallback,
                                                  userInfo: UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque()))
         
         guard let eventTap = keyboardTapLockEvent else { return }
         
         tapEventEnable(eventTap)
-        
-//        let runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, eventTap, 0)
-//        CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, .commonModes)
-//        CGEvent.tapEnable(tap: eventTap, enable: true)
     }
     
-    private func lockTrackpad() {
+    private func startTrackpadMonitoring() {
         var eventMask = CGEventMask(1 << CGEventType.leftMouseDown.rawValue) |
                         CGEventMask(1 << CGEventType.leftMouseUp.rawValue) |
                         CGEventMask(1 << CGEventType.leftMouseDragged.rawValue) |
@@ -130,7 +138,7 @@ class InputBlockingManager: ObservableObject {
                                                  place: .headInsertEventTap,
                                                  options: .defaultTap,
                                                  eventsOfInterest: eventMask,
-                                                 callback: tapEventCallback,
+                                                 callback: trackpadTapEventCallback,
                                                  userInfo: UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque()))
 
         guard let eventTap = trackpadTapLockEvent else { return }
@@ -144,39 +152,17 @@ class InputBlockingManager: ObservableObject {
         CGEvent.tapEnable(tap: eventTap, enable: true)
     }
     
-    private func unlockKeyboard() {
+    private func stopKeyboardMonitoring() {
         if let eventTap = keyboardTapLockEvent {
             CGEvent.tapEnable(tap: eventTap, enable: false)
         }
         keyboardTapLockEvent = nil
-        isLeftShiftKeyPressed = false
-        isRightShiftKeyPressed = false
     }
 
-    private func unlockTrackpad() {
+    private func stopTrackpadMonitoring() {
         if let eventTap = trackpadTapLockEvent {
             CGEvent.tapEnable(tap: eventTap, enable: false)
         }
         trackpadTapLockEvent = nil
      }
-
-    private func startCountdown() {
-        countdown = 30
-        timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in 
-            if self.countdown > 0 {
-                self.countdown -= 1
-            } else {
-                self.isKeyboardLocked = false
-                self.isTrackpadLocked = false
-                self.stopCountdown()
-            }
-        }
-    }
-
-    private func stopCountdown() {
-        timer?.invalidate()
-        timer = nil
-        countdown = 30
-    }
 }
