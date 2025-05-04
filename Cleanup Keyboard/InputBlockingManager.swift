@@ -27,12 +27,10 @@ func keyboardTapEventCallback(proxy: CGEventTapProxy,
         if keyCode == 56 || keyCode == 60 { // Teclas Shift (esquerda e direita)
             let flags = event.flags
             
-            if keyCode == 56 {
-                monitor.isLeftShiftKeyPressed = flags.contains(.maskShift)
-            }
-            
-            if keyCode == 60 {
-                monitor.isRightShiftKeyPressed = flags.contains(.maskShift)
+            switch keyCode {
+            case 56: monitor.isLeftShiftKeyPressed = flags.contains(.maskShift)
+            case 60: monitor.isRightShiftKeyPressed = flags.contains(.maskShift)
+            default: break
             }
             
             return Unmanaged.passRetained(event)
@@ -83,6 +81,14 @@ class InputBlockingManager: ObservableObject {
             .map { $0 && $1 }
             .assign(to: \.areBothShiftKeysPressed, on: self)
             .store(in: &cancellables)
+        
+        $isCleaning.map(\.self).sink { [weak self] isCleaning in
+            if !isCleaning {
+                self?.isLeftShiftKeyPressed = false
+                self?.isRightShiftKeyPressed = false
+            }
+        }
+        .store(in: &cancellables)
     }
     
     deinit {
