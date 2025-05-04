@@ -173,6 +173,10 @@ class InputBlockingManager: ObservableObject {
         CGEvent.tapEnable(tap: eventTap, enable: true)
     }
     
+    private func stopMonitoring(tapEventType: TapEventType) {
+        
+    }
+    
     private func stopKeyboardMonitoring() {
         if let eventTap = keyboardTapLockEvent {
             CGEvent.tapEnable(tap: eventTap, enable: false)
