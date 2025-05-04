@@ -19,11 +19,11 @@ struct ContentView: View {
                     .aspectRatio(contentMode: .fit)
                     .padding()
 
-                Text("Keyboard Cleaner")
+                Text("Limpeza do Macbook")
                     .font(.largeTitle)
                     .fontWeight(.bold)
 
-                Text("Bloqueie o teclado e o trackpad para limpeza fácil")
+                Text("Bloqueie o teclado e o trackpad antes de realizar a limpeza")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
@@ -35,8 +35,8 @@ struct ContentView: View {
                 Section("Configurações") {
                     Toggle("Bloquear Teclado", systemImage: "keyboard", isOn: $inputManager.isKeyboardLocked)
                         .toggleStyle(.switch)
-
-                    Toggle("Bloquear Trackpad/Mouse", systemImage: "rectangle.and.hand.point.up.left", isOn: $inputManager.isTrackpadLocked)
+                    
+                    Toggle("Bloquear Trackpad", systemImage: "rectangle.and.hand.point.up.left", isOn: $inputManager.isTrackpadLocked)
                         .toggleStyle(.switch)
                     
                     HStack {
@@ -49,8 +49,18 @@ struct ContentView: View {
                     }
                     .disabled((!inputManager.isKeyboardLocked && !inputManager.isTrackpadLocked) || inputManager.isCleaning)
                 }
+                
+                HStack {
+                    Spacer()
+                    Text("Para destravar o teclado ou o trackpad, pressione as teclas Shift (direita e esquerda) simultaneamente.")
+                        .font(.system(size: 10))
+                        .foregroundColor(.secondary)
+                    Spacer()
+                }
+                
             }
             .formStyle(.grouped)
+            
         }
         .onAppear {
             checkAccessibilityPermissions()
