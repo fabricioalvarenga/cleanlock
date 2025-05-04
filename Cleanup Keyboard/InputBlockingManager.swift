@@ -83,29 +83,30 @@ class InputBlockingManager: ObservableObject {
             .store(in: &cancellables)
         
         $isCleaning.map(\.self).sink { [weak self] isCleaning in
-            if !isCleaning {
+            if isCleaning {
+                self?.startKeyboardMonitoring()
+                self?.startTrackpadMonitoring()
+            } else {
                 self?.isLeftShiftKeyPressed = false
                 self?.isRightShiftKeyPressed = false
+                
+                self?.stopKeyboardMonitoring()
+                self?.stopTrackpadMonitoring()
             }
         }
         .store(in: &cancellables)
     }
     
     deinit {
-        stopKeyboardMonitoring()
-        stopTrackpadMonitoring()
+        isCleaning = false
     }
     
     func startCleaning() {
         isCleaning = true
-        startKeyboardMonitoring()
-        startTrackpadMonitoring()
     }
     
     func stopCleaning() {
         isCleaning = false
-        stopKeyboardMonitoring()
-        stopTrackpadMonitoring()
     }
    
     private func startKeyboardMonitoring() {
