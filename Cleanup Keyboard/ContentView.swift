@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var inputManager = InputBlockerManager()
+    @StateObject private var inputManager = InputBlockingManager()
     @State var showAlert = false
 
     var body: some View {
@@ -33,15 +33,15 @@ struct ContentView: View {
 
             Form {
                 Section("Configurações") {
-                    Toggle("Bloquear Teclado", systemImage: "keyboard", isOn: $inputManager.isKeyboardBlocked)
+                    Toggle("Bloquear Teclado", systemImage: "keyboard", isOn: $inputManager.isKeyboardLocked)
                         .toggleStyle(.switch)
-                        .onChange(of: inputManager.isKeyboardBlocked) { 
+                        .onChange(of: inputManager.isKeyboardLocked) { 
                             inputManager.configureKeyboardState()
                         }
 
-                    Toggle("Bloquear Trackpad/Mouse", systemImage: "rectangle.and.hand.point.up.left", isOn: $inputManager.isTrackpadBlocked)
+                    Toggle("Bloquear Trackpad/Mouse", systemImage: "rectangle.and.hand.point.up.left", isOn: $inputManager.isTrackpadLocked)
                         .toggleStyle(.switch)
-                        .onChange(of: inputManager.isTrackpadBlocked) {
+                        .onChange(of: inputManager.isTrackpadLocked) {
                             inputManager.configureTrackpadState()
                         }
                 }
@@ -50,6 +50,11 @@ struct ContentView: View {
         }
         .onAppear {
             checkAccessibilityPermissions()
+        }
+       .onChange(of: inputManager.areBothShiftKeysPressed) { _, bothShiftKeysPressed in
+            if bothShiftKeysPressed {
+                inputManager.isKeyboardLocked = false
+            }
         }
         .alert(isPresented: $showAlert) {
             Alert(
