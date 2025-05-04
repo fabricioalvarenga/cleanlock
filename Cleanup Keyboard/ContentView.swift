@@ -17,37 +17,37 @@ struct ContentView: View {
                 Image(systemName: "macbook")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(height: 150)
                     .padding()
 
                 Text("Keyboard Cleaner")
                     .font(.largeTitle)
                     .fontWeight(.bold)
 
-                Text("Bloqueie o teclado e trackpad para limpeza fácil")
+                Text("Bloqueie o teclado e o trackpad para limpeza fácil")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
-            .frame(maxHeight: .infinity)
+            .padding()
 
             Divider()
 
-            VStack(spacing: 20) {
-                Toggle("Bloquear Teclado", systemImage: "keyboard", isOn: $inputManager.isKeyboardBlocked)
-                    .toggleStyle(.switch)
-                    .onChange(of: inputManager.isKeyboardBlocked) { 
-                        inputManager.configureKeyboardState()
-                    }
+            Form {
+                Section("Configurações") {
+                    Toggle("Bloquear Teclado", systemImage: "keyboard", isOn: $inputManager.isKeyboardBlocked)
+                        .toggleStyle(.switch)
+                        .onChange(of: inputManager.isKeyboardBlocked) { 
+                            inputManager.configureKeyboardState()
+                        }
 
-                Toggle("Bloquear Trackpad/Mouse", systemImage: "rectangle.and.hand.point.up.left", isOn: $inputManager.isTrackpadBlocked)
-                    .toggleStyle(.switch)
-                    .onChange(of: inputManager.isTrackpadBlocked) {
-                        inputManager.configureTrackpadState()
-                    }
+                    Toggle("Bloquear Trackpad/Mouse", systemImage: "rectangle.and.hand.point.up.left", isOn: $inputManager.isTrackpadBlocked)
+                        .toggleStyle(.switch)
+                        .onChange(of: inputManager.isTrackpadBlocked) {
+                            inputManager.configureTrackpadState()
+                        }
+                }
             }
-            .padding()
+            .formStyle(.grouped)
         }
-        .padding()
         .onAppear {
             checkAccessibilityPermissions()
         }

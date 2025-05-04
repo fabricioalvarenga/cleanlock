@@ -12,8 +12,9 @@ struct Cleanup_KeyboardApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .frame(minWidth: 500, minHeight: 400)
+                .frame(width: 350, height: 350)
         }
         .windowStyle(.hiddenTitleBar)
+        .windowResizability(.contentSize)
     }
 }
