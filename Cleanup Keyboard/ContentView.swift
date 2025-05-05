@@ -19,7 +19,7 @@ struct ContentView: View {
                     .aspectRatio(contentMode: .fit)
                     .padding()
 
-                Text("Limpeza do Macbook")
+                Text("Limpe o seu Macbook")
                     .font(.largeTitle)
                     .fontWeight(.bold)
 
