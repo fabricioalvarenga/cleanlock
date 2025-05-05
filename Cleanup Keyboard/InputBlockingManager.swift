@@ -129,7 +129,9 @@ class InputBlockingManager: ObservableObject {
     
     private func startTrackpadMonitoring() {
         // Esconde o ponteiro do trackpad/mouse
-        CGDisplayHideCursor(CGMainDisplayID())
+        if isTrackpadLocked {
+            CGDisplayHideCursor(CGMainDisplayID())
+        }
         
         var eventMask = CGEventMask(1 << CGEventType.leftMouseDown.rawValue) |
         CGEventMask(1 << CGEventType.leftMouseUp.rawValue) |
