@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct Cleanup_KeyboardApp: App {
+struct CleanupKeyboardApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()

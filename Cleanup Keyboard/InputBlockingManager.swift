@@ -20,36 +20,31 @@ fileprivate func tapEventCallback(proxy: CGEventTapProxy,
     }
     
     let eventInfo = Unmanaged<TapEventInfo>.fromOpaque(refcon).takeUnretainedValue()
+    let eventType = eventInfo.eventType
     let monitor = eventInfo.manager
     
-    switch eventInfo.eventType {
+    switch eventType {
     case .keyboard:
         if type == .flagsChanged {
             let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
+            let flags = event.flags
             
             if keyCode == 56 || keyCode == 60 { // Teclas Shift (esquerda e direita)
-                let flags = event.flags
-                
                 switch keyCode {
                 case 56: monitor.isLeftShiftKeyPressed = flags.contains(.maskShift)
                 case 60: monitor.isRightShiftKeyPressed = flags.contains(.maskShift)
                 default: break
                 }
-                
                 return Unmanaged.passRetained(event)
             }
         }
         
-        if !monitor.isKeyboardLocked {
-            return Unmanaged.passRetained(event)
-        }
+        if monitor.isKeyboardLocked { return nil }
     case .trackpad:
-        if !monitor.isTrackpadLocked {
-            return Unmanaged.passRetained(event)
-        }
+        if monitor.isTrackpadLocked { return nil }
     }
     
-    return nil
+    return Unmanaged.passRetained(event)
 }
 
 fileprivate enum TapEventType {
@@ -90,29 +85,25 @@ class InputBlockingManager: ObservableObject {
         
         $isCleaning.map(\.self).sink { [weak self] isCleaning in
             if isCleaning {
-                self?.startKeyboardMonitoring()
-                self?.startTrackpadMonitoring()
+                self?.startMonitoring()
             } else {
                 self?.isLeftShiftKeyPressed = false
                 self?.isRightShiftKeyPressed = false
-                
-                self?.stopKeyboardMonitoring()
-                self?.stopTrackpadMonitoring()
+                self?.stopMonitoring()
             }
         }
         .store(in: &cancellables)
     }
     
-    deinit {
-        isCleaning = false
-    }
+    deinit { isCleaning = false }
     
-    func startCleaning() {
-        isCleaning = true
-    }
+    func startCleaning() { isCleaning = true }
     
-    func stopCleaning() {
-        isCleaning = false
+    func stopCleaning() { isCleaning = false }
+    
+    private func startMonitoring() {
+        startKeyboardMonitoring()
+        startTrackpadMonitoring()
     }
    
     private func startKeyboardMonitoring() {
@@ -133,23 +124,30 @@ class InputBlockingManager: ObservableObject {
         
         guard let eventTap = keyboardTapLockEvent else { return }
         
-        tapEventEnable(eventTap)
+        enableTapEvent(eventTap)
     }
     
     private func startTrackpadMonitoring() {
+        // Esconde o ponteiro do trackpad/mouse
+        CGDisplayHideCursor(CGMainDisplayID())
+        
         var eventMask = CGEventMask(1 << CGEventType.leftMouseDown.rawValue) |
-                        CGEventMask(1 << CGEventType.leftMouseUp.rawValue) |
-                        CGEventMask(1 << CGEventType.leftMouseDragged.rawValue) |
-                        CGEventMask(1 << CGEventType.rightMouseDown.rawValue) |
-                        CGEventMask(1 << CGEventType.rightMouseUp.rawValue) |
-                        CGEventMask(1 << CGEventType.rightMouseDragged.rawValue)
+        CGEventMask(1 << CGEventType.leftMouseUp.rawValue) |
+        CGEventMask(1 << CGEventType.leftMouseDragged.rawValue)
         
         eventMask = eventMask |
-                    CGEventMask(1 << CGEventType.mouseMoved.rawValue) |
-                    CGEventMask(1 << CGEventType.otherMouseDown.rawValue) |
-                    CGEventMask(1 << CGEventType.otherMouseUp.rawValue) |
-                    CGEventMask(1 << CGEventType.otherMouseDragged.rawValue) |
-                    CGEventMask(1 << CGEventType.scrollWheel.rawValue)
+        CGEventMask(1 << CGEventType.rightMouseDown.rawValue) |
+        CGEventMask(1 << CGEventType.rightMouseUp.rawValue) |
+        CGEventMask(1 << CGEventType.rightMouseDragged.rawValue)
+        
+        eventMask = eventMask |
+        CGEventMask(1 << CGEventType.otherMouseDown.rawValue) |
+        CGEventMask(1 << CGEventType.otherMouseUp.rawValue) |
+        CGEventMask(1 << CGEventType.otherMouseDragged.rawValue)
+        
+        eventMask = eventMask |
+        CGEventMask(1 << CGEventType.mouseMoved.rawValue) |
+        CGEventMask(1 << CGEventType.scrollWheel.rawValue)
 
         // Cria estrutura de informações do evento para que o mesmo callback
         // possa identificar se se trata de um evento de teclado ou trackpad
@@ -164,17 +162,18 @@ class InputBlockingManager: ObservableObject {
 
         guard let eventTap = trackpadTapLockEvent else { return }
         
-        tapEventEnable(eventTap)
+        enableTapEvent(eventTap)
     }
     
-    private func tapEventEnable(_ eventTap: CFMachPort) {
+    private func enableTapEvent(_ eventTap: CFMachPort) {
         let runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, eventTap, 0)
         CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, .commonModes)
         CGEvent.tapEnable(tap: eventTap, enable: true)
     }
     
-    private func stopMonitoring(tapEventType: TapEventType) {
-        
+    private func stopMonitoring() {
+        stopKeyboardMonitoring()
+        stopTrackpadMonitoring()
     }
     
     private func stopKeyboardMonitoring() {
@@ -185,6 +184,9 @@ class InputBlockingManager: ObservableObject {
     }
 
     private func stopTrackpadMonitoring() {
+         // Mostra o ponteiro do trackpad/mouse
+        CGDisplayShowCursor(CGMainDisplayID())
+        
         if let eventTap = trackpadTapLockEvent {
             CGEvent.tapEnable(tap: eventTap, enable: false)
         }
