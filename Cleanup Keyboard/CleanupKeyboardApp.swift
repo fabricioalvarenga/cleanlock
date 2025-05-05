@@ -13,6 +13,10 @@ struct CleanupKeyboardApp: App {
         WindowGroup {
             ContentView()
                 .frame(width: 575, height: 500)
+                // Faz com que a janela do aplicativo fique no topo (em frente a outras janelas de outros aplicativos)
+                .background(WindowAccessor { window in
+                    window?.level = .floating
+                })
         }
         .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
