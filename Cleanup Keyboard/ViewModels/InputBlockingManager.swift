@@ -150,7 +150,7 @@ class InputBlockingManager: ObservableObject {
         eventMask = eventMask |
         CGEventMask(1 << CGEventType.mouseMoved.rawValue) |
         CGEventMask(1 << CGEventType.scrollWheel.rawValue)
-
+        
         // Cria estrutura de informações do evento para que o mesmo callback
         // possa identificar se se trata de um evento de teclado ou trackpad
         trackpadEventInfo = TapEventInfo(manager: self, eventType: .trackpad)

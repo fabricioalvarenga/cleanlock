@@ -14,6 +14,7 @@ struct LowerHalfView: View {
     var body: some View {
         Form {
             Section("Configurações") {
+                //            Section("Configurações") {
                 Toggle("Bloquear Teclado", systemImage: "keyboard", isOn: $inputManager.isKeyboardLocked)
                     .toggleStyle(.switch)
                 
@@ -30,11 +31,10 @@ struct LowerHalfView: View {
                 }
                 .disabled((!inputManager.isKeyboardLocked && !inputManager.isTrackpadLocked) || inputManager.isCleaning)
             }
-            
             HStack {
                 Spacer()
                 Text("""
-                    Para destravar o teclado ou o trackpad, pressione
+                    Para destravar o teclado e o trackpad, pressione
                     as teclas Shift (direita e esquerda) simultaneamente.
                     """)
                 .multilineTextAlignment(.center)
