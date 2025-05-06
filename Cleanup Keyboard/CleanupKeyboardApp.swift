@@ -9,10 +9,13 @@ import SwiftUI
 
 @main
 struct CleanupKeyboardApp: App {
+    @StateObject private var inputManager = InputBlockingManager()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .frame(width: 575, height: 500)
+                .environmentObject(inputManager)
+                .frame(width: 500, height: 520)
                 // Faz com que a janela do aplicativo fique no topo (em frente a outras janelas de outros aplicativos)
                 .background(WindowAccessor { window in
                     window?.level = .floating

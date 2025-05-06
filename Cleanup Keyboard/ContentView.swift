@@ -8,69 +8,52 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var inputManager = InputBlockingManager()
-    @State var showAlert = false
+    @EnvironmentObject private var inputManager: InputBlockingManager
+    @State private var showAlert = false
+    @State private var lowerHalfViewOpacity = 1.0
+    @State private var cleaningViewOpacity = 1.0
+    @State private var timer: Timer?
 
     var body: some View {
         VStack {
-            VStack {
-                Image(systemName: "macbook")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .padding()
-
-                Text("Limpe o seu Macbook")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-
-                Text("Bloqueie o teclado e o trackpad antes de realizar a limpeza")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-            }
-            .padding()
-
-            Divider()
-
-            Form {
-                Section("Configurações") {
-                    Toggle("Bloquear Teclado", systemImage: "keyboard", isOn: $inputManager.isKeyboardLocked)
-                        .toggleStyle(.switch)
-                    
-                    Toggle("Bloquear Trackpad", systemImage: "rectangle.and.hand.point.up.left", isOn: $inputManager.isTrackpadLocked)
-                        .toggleStyle(.switch)
-                    
-                    HStack {
-                        Spacer()
-                        Button("Iniciar Limpeza") {
-                            inputManager.startCleaning()
-                        }
-                        .buttonStyle(.borderedProminent)
-                        Spacer()
-                    }
-                    .disabled((!inputManager.isKeyboardLocked && !inputManager.isTrackpadLocked) || inputManager.isCleaning)
-                }
-                
-                HStack {
-                    Spacer()
-                    Text("Para destravar o teclado ou o trackpad, pressione as teclas Shift (direita e esquerda) simultaneamente.")
-                        .font(.system(size: 10))
-                        .foregroundColor(.secondary)
-                    Spacer()
-                }
-                
-            }
-            .formStyle(.grouped)
+            UpperHalfView()
             
+            Divider()
+            
+            ZStack {
+                LowerHalfView()
+                    .opacity(lowerHalfViewOpacity)
+                    .zIndex(inputManager.isCleaning ? 0 : 1)
+                CleaningView()
+                    .opacity(cleaningViewOpacity)
+                    .zIndex(inputManager.isCleaning ? 1 : 0)
+            }
         }
         .onAppear {
+            // Inicializa os estados de opacidade baseados no estado do inputManager
+            lowerHalfViewOpacity = inputManager.isCleaning ? 0.0 : 1.0
+            cleaningViewOpacity = inputManager.isCleaning ? 1.0 : 0.0
+            
             checkAccessibilityPermissions()
         }
        .onChange(of: inputManager.areBothShiftKeysPressed) { _, pressed in
-           if pressed {
-               inputManager.stopCleaning()
-           }
+           if pressed { inputManager.stopCleaning() }
         }
-        .alert(isPresented: $showAlert) {
+       .onChange(of: inputManager.isCleaning) { _, isCleaning in
+           if isCleaning {
+               withAnimation(.smooth(duration: 0.5)) { lowerHalfViewOpacity = 0.0 }
+               withAnimation(.smooth(duration: 0.5)) { cleaningViewOpacity = 1.0 }
+           } else {
+               // Atrasa a transição entre as telas apenas para que o usuário
+               // possa perceber a mudança de cor dos botões Shift desenhados na tela
+               timer?.invalidate()
+               timer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: false) { _ in
+                   withAnimation(.smooth(duration: 0.5)) { lowerHalfViewOpacity = 1.0 }
+                   withAnimation(.smooth(duration: 0.5)) { cleaningViewOpacity = 0.0 }
+               }
+           }
+       }
+       .alert(isPresented: $showAlert) {
             Alert(
                 title: Text("Permissões Necessárias"),
                 message: Text("Este aplicativo precisa de permissões de acessibilidade para funcionar. Por favor, vá em Preferências do Sitema > Segurança e Privacidade > Acessibilidade e adicione este aplicativo à lista."),
