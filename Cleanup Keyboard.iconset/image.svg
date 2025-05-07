@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fundo com gradiente lilás -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2a1260" />
+      <stop offset="100%" stop-color="#8366aa" />
+    </linearGradient>
+    
+    <!-- Filtro para sombra do gradiente -->
+    <filter id="gradientShadow" x="-20%" y="-20%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Retângulo de fundo com bordas arredondadas -->
+  <g filter="url(#gradientShadow)" transform="translate(0, 0)">
+    <rect x="50" y="50" width="412" height="412" rx="105" ry="105" fill="url(#bgGradient)"/>
+    
+    <!-- Cadeado branco com preenchimento sólido -->
+    <g transform="translate(125, 130) scale(0.55)">
+      
+      <!-- Preenchimento branco sólido para o corpo do cadeado -->
+      <path fill="#ffffff" d="M111.5,191h240c13.51,0,24.5,10.991,24.5,24.5V303.5c0,79.678-64.822,144.5-144.5,144.5S87,383.178,87,303.5v-88
+        c0-13.509,10.99-24.5,24.5-24.5z"/>
+      
+      <!-- Preenchimento branco para o arco/trava -->
+      <path fill="#ffffff" d="M119,127.5C119,65.467,169.468,15,231.5,15S344,65.467,344,127.5V176h-17v-48.5c0-52.659-42.841-95.5-95.5-95.5S136,74.841,136,127.5V176h-17V127.5z"/>
+                  
+      <!-- Orifício da chave real (a parte visível em lilás) -->
+      <path fill="#2a1260" d="m243.728,316.579c-2.663,1.55-4.107,4.571-3.642,7.617l6.596,43.088c0.01,0.063 0.034,0.227-0.114,0.4-0.149,0.174-0.315,0.175-0.378,0.175l-29.369,.106c-0.084,0-0.232-0.001-0.381-0.173-0.149-0.174-0.125-0.339-0.115-0.402l6.59-43.198c0.465-3.044-0.979-6.064-3.642-7.613-9.67-5.627-14.186-16.354-11.504-27.326 2.083-8.517 9.217-15.572 17.753-17.556 2.03-0.472 4.049-0.705 6.031-0.705 5.523,0 10.765,1.81 15.17,5.308 5.896,4.683 9.277,11.681 9.277,19.199-5.68434e-14,8.728-4.588,16.608-12.272,21.08z"/>
+    </g>
+  </g>
+</svg>
