@@ -3,8 +3,8 @@
   <!-- Fundo com gradiente lilás -->
   <defs>
     <linearGradient id="bgGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#2a1260" />
-      <stop offset="100%" stop-color="#8366aa" />
+      <stop offset="0%" stop-color="#872EC4" />
+      <stop offset="100%" stop-color="#B150E2" />
     </linearGradient>
     
     <!-- Filtro para sombra do gradiente -->
