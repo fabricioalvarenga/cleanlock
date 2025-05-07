@@ -25,6 +25,26 @@ fileprivate func tapEventCallback(proxy: CGEventTapProxy,
     
     switch eventType {
     case .keyboard:
+        // Verifica se é um evento definido pelo sistema (systemDefined) para controle de mídia/volume
+//        if type == monitor.systemMidiaControlEventType {
+//            let data = event.getIntegerValueField(.eventSourceUnixProcessID)
+//            let keyFlags = Int32((data & 0xFFFF0000) >> 16)
+//            let keyData = (data & 0xFFFF)
+//            let keyState = (keyFlags & 0xFF00) >> 8
+//            
+//            if ((keyData & 0xFF) == 7) || // Volume Up
+//                ((keyData & 0xFF) == 8) || // Volume Down
+//                ((keyData & 0xFF) == 3) { // Mute
+//                
+//                let keyDown = keyState & 0x1
+//                let keyCode = keyData & 0xFF
+//                
+//                print("Tecla de Volume \(keyCode): \(keyDown == 1 ? "Pressionada" : "Liberada")")
+//                
+//                return nil
+//            }
+//        }
+        
         if type == .flagsChanged {
             let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
             let flags = event.flags
@@ -77,7 +97,10 @@ class InputBlockingManager: ObservableObject {
     private var shiftKeysTapEvent: CFMachPort?
     private var cancellables = Set<AnyCancellable>()
     
-    init() {
+    // Tipo 14 é para eventos definidos pelo sistema (systemDefined) - teclas especiais (volume, brilho, etc)
+    let systemMidiaControlEventType = CGEventType(rawValue: 14)!
+        
+   init() {
         Publishers.CombineLatest($isLeftShiftKeyPressed, $isRightShiftKeyPressed)
             .map { $0 && $1 }
             .assign(to: \.areBothShiftKeysPressed, on: self)
@@ -107,9 +130,12 @@ class InputBlockingManager: ObservableObject {
     }
    
     private func startKeyboardMonitoring() {
-        let eventMask = CGEventMask(1 << CGEventType.keyDown.rawValue) |
+        var eventMask = CGEventMask(1 << CGEventType.keyDown.rawValue) |
         CGEventMask(1 << CGEventType.keyUp.rawValue) |
         CGEventMask(1 << CGEventType.flagsChanged.rawValue)
+        
+        // Eventos definidos pelo sistema (systemDefined) para teclas especiais (volume, brilho, etc)
+        eventMask = eventMask | (1 << systemMidiaControlEventType.rawValue)
         
         // Cria estrutura de informações do evento para que o mesmo callback
         // possa identificar se se trata de um evento de teclado ou trackpad
