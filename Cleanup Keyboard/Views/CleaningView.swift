@@ -43,4 +43,6 @@ struct CleaningView: View {
 
 #Preview {
     CleaningView()
+        .environmentObject(InputBlockingManager())
+        .padding()
 }

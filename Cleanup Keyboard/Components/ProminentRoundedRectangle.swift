@@ -25,3 +25,9 @@ struct ProminentRoundedRectangle: View {
             .shadow(color: (color ?? .primary).opacity(0.2), radius: 2, x: 0, y: 1)
     }
 }
+
+#Preview {
+    ProminentRoundedRectangle(color: Color.customAccentColor)
+        .frame(width: 100, height: 100)
+        .padding()
+}

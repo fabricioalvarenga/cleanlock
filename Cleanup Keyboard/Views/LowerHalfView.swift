@@ -76,4 +76,6 @@ struct LowerHalfView: View {
 
 #Preview {
     LowerHalfView()
+        .tint(Color.customAccentColor)
+        .environmentObject(InputBlockingManager())
 }

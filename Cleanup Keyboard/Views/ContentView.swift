@@ -75,4 +75,6 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .tint(Color.customAccentColor)
+        .environmentObject(InputBlockingManager())
 }
