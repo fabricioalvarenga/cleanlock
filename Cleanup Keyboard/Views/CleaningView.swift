@@ -29,8 +29,6 @@ struct CleaningView: View {
                         .foregroundColor(Color.white))
                     .padding()
                 
-//                Spacer()
-                
                 ProminentRoundedRectangle(color: (inputManager.isCleaning && !inputManager.isRightShiftKeyPressed) ? .black : Color.customAccentColor)
                     .frame(width: 100, height: 80)
                     .overlay(Label("Shift R", systemImage: "shift.fill")
@@ -38,6 +36,7 @@ struct CleaningView: View {
                     .padding()
              }
         }
+        .padding(.bottom)
     }
 }
 

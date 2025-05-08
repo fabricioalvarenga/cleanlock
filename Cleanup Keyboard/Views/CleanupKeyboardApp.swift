@@ -15,7 +15,7 @@ struct CleanupKeyboardApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(inputManager)
-                .frame(width: 500, height: 520)
+                .frame(width: 500, height: 435)
                 .tint(Color.customAccentColor)
                 // Faz com que a janela do aplicativo fique no topo (em frente a outras janelas de outros aplicativos)
                 .background(WindowAccessor { window in
