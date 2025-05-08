@@ -17,8 +17,13 @@ struct ContentView: View {
     var body: some View {
         VStack {
             UpperHalfView()
+                .frame(maxWidth: .infinity)
+                .background(Color.gray.opacity(0.1))
+                .cornerRadius(12)
+                .padding(.horizontal)
             
             Divider()
+                .padding(.horizontal)
             
             ZStack {
                 LowerHalfView()

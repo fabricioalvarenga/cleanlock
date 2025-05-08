@@ -26,13 +26,13 @@ struct CleaningView: View {
                 BorderedProminentLabel(text: "Shift L",
                                        textColor: .white,
                                        imageName: "shift.fill",
-                                       backgroundColor: (inputManager.isCleaning && !inputManager.isLeftShiftKeyPressed) ? .black : .accentColor)
+                                       backgroundColor: (inputManager.isCleaning && !inputManager.isLeftShiftKeyPressed) ? .black : Color.customAccentColor)
                 .padding(.horizontal, 50)
                 Spacer()
                 BorderedProminentLabel(text: "Shift R",
                                        textColor: .white,
                                        imageName: "shift.fill",
-                                       backgroundColor: (inputManager.isCleaning && !inputManager.isRightShiftKeyPressed) ? .black : .accentColor)
+                                       backgroundColor: (inputManager.isCleaning && !inputManager.isRightShiftKeyPressed) ? .black : Color.customAccentColor)
                 .padding(.horizontal, 50)
             }
         }

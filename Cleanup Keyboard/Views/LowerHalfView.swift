@@ -14,19 +14,38 @@ struct LowerHalfView: View {
     var body: some View {
         Form {
             Section("Configurações") {
-                //            Section("Configurações") {
-                Toggle("Bloquear Teclado", systemImage: "keyboard", isOn: $inputManager.isKeyboardLocked)
-                    .toggleStyle(.switch)
+                Toggle(isOn: $inputManager.isKeyboardLocked) {
+                    HStack {
+                        Image(systemName: "keyboard")
+                            .foregroundColor(Color.customAccentColor)
+                       
+                        Text("Bloquear Teclado")
+                    }
+                    
+                }
+                .toggleStyle(.switch)
                 
-                Toggle("Bloquear Trackpad", systemImage: "rectangle.and.hand.point.up.left", isOn: $inputManager.isTrackpadLocked)
-                    .toggleStyle(.switch)
-                
+                Toggle(isOn: $inputManager.isTrackpadLocked) {
+                    HStack {
+                        Image(systemName: "rectangle.and.hand.point.up.left")
+                            .foregroundColor(Color.customAccentColor)
+                        
+                        Text("Bloquear Trackpad")
+                    }
+                }
+                .toggleStyle(.switch)
+               
                 HStack {
                     Spacer()
-                    Button("Iniciar Limpeza") {
+                    
+                    Button {
                         inputManager.startCleaning()
+                    } label: {
+                        Label("Iniciar Limpeza", systemImage: "drop.fill")
                     }
                     .buttonStyle(.borderedProminent)
+                    .controlSize(.large )
+                    
                     Spacer()
                 }
                 .disabled((!inputManager.isKeyboardLocked && !inputManager.isTrackpadLocked) || inputManager.isCleaning)
