@@ -22,21 +22,21 @@ struct CleaningView: View {
             .foregroundColor(.secondary)
             .padding(.vertical)
             
-            HStack(spacing: 20) {
-                RoundedLabel(text: "Shift L",
-                                       textColor: .white,
-                                       imageName: "shift.fill",
-                                       backgroundColor: (inputManager.isCleaning && !inputManager.isLeftShiftKeyPressed) ? .black : Color.customAccentColor)
-                .padding(.horizontal, 50)
+            HStack {
+                ProminentRoundedRectangle(color: (inputManager.isCleaning && !inputManager.isLeftShiftKeyPressed) ? .black : Color.customAccentColor)
+                    .frame(width: 100, height: 80)
+                    .overlay(Label("Shift L", systemImage: "shift.fill")
+                        .foregroundColor(Color.white))
+                    .padding()
                 
-                Spacer()
+//                Spacer()
                 
-                RoundedLabel(text: "Shift R",
-                                       textColor: .white,
-                                       imageName: "shift.fill",
-                                       backgroundColor: (inputManager.isCleaning && !inputManager.isRightShiftKeyPressed) ? .black : Color.customAccentColor)
-                .padding(.horizontal, 50)
-            }
+                ProminentRoundedRectangle(color: (inputManager.isCleaning && !inputManager.isRightShiftKeyPressed) ? .black : Color.customAccentColor)
+                    .frame(width: 100, height: 80)
+                    .overlay(Label("Shift R", systemImage: "shift.fill")
+                        .foregroundColor(Color.white))
+                    .padding()
+             }
         }
     }
 }

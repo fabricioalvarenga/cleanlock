@@ -16,9 +16,12 @@ struct LowerHalfView: View {
             Section("Configurações") {
                 Toggle(isOn: $inputManager.isKeyboardLocked) {
                     HStack {
-                        Image(systemName: "keyboard")
-                            .foregroundColor(Color.customAccentColor)
-                       
+                        ProminentRoundedRectangle(color: Color.customAccentColor)
+                            .frame(width: 25, height: 25)
+                            .overlay(Image(systemName: "keyboard")
+                                .foregroundColor(Color.white)
+                                .controlSize(.small))
+                        
                         Text("Bloquear Teclado")
                     }
                     
@@ -27,8 +30,11 @@ struct LowerHalfView: View {
                 
                 Toggle(isOn: $inputManager.isTrackpadLocked) {
                     HStack {
-                        Image(systemName: "rectangle.and.hand.point.up.left")
-                            .foregroundColor(Color.customAccentColor)
+                         ProminentRoundedRectangle(color: Color.customAccentColor)
+                            .frame(width: 25, height: 25)
+                            .overlay(Image(systemName: "rectangle.and.hand.point.up.left")
+                                .foregroundColor(Color.white)
+                                .controlSize(.small))
                         
                         Text("Bloquear Trackpad")
                     }
