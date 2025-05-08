@@ -24,7 +24,7 @@ struct BorderedProminentLabel: View {
         }
         .padding()
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: 6)
                 .fill(backgroundColor ?? Color.customAccentColor)
         )
     }

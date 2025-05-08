@@ -50,6 +50,7 @@ struct LowerHalfView: View {
                 }
                 .disabled((!inputManager.isKeyboardLocked && !inputManager.isTrackpadLocked) || inputManager.isCleaning)
             }
+            
             HStack {
                 Spacer()
                 Text("""

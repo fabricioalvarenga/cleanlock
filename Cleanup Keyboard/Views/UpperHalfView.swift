@@ -13,7 +13,7 @@ struct UpperHalfView: View {
             Image(systemName: "macbook")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .padding()
+                .padding(.bottom)
             
             Text("Limpe o seu Macbook")
                 .font(.largeTitle)
@@ -23,7 +23,12 @@ struct UpperHalfView: View {
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
-        .padding()
+        .frame(maxWidth: .infinity)
+        .padding(.vertical)
+        .background(Color.gray.opacity(0.1))
+        .cornerRadius(6)
+        .padding(.horizontal)
+        
     }
 }
 
