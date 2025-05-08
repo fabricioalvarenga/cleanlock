@@ -23,13 +23,15 @@ struct CleaningView: View {
             .padding(.vertical)
             
             HStack(spacing: 20) {
-                BorderedProminentLabel(text: "Shift L",
+                RoundedLabel(text: "Shift L",
                                        textColor: .white,
                                        imageName: "shift.fill",
                                        backgroundColor: (inputManager.isCleaning && !inputManager.isLeftShiftKeyPressed) ? .black : Color.customAccentColor)
                 .padding(.horizontal, 50)
+                
                 Spacer()
-                BorderedProminentLabel(text: "Shift R",
+                
+                RoundedLabel(text: "Shift R",
                                        textColor: .white,
                                        imageName: "shift.fill",
                                        backgroundColor: (inputManager.isCleaning && !inputManager.isRightShiftKeyPressed) ? .black : Color.customAccentColor)

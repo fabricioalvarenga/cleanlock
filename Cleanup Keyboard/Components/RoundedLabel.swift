@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct BorderedProminentLabel: View {
+struct RoundedLabel: View {
     var text: String?
     var textColor: Color?
     var imageName: String?
@@ -25,11 +25,10 @@ struct BorderedProminentLabel: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 6)
-                .fill(backgroundColor ?? Color.customAccentColor)
-        )
+                .fill(backgroundColor ?? Color.customAccentColor))
     }
 }
 
 #Preview {
-    BorderedProminentLabel()
+    RoundedLabel()
 }

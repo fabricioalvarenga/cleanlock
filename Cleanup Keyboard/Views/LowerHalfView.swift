@@ -44,7 +44,7 @@ struct LowerHalfView: View {
                         Label("Iniciar Limpeza", systemImage: "drop.fill")
                     }
                     .buttonStyle(.borderedProminent)
-                    .controlSize(.large )
+                    .controlSize(.large)
                     
                     Spacer()
                 }
