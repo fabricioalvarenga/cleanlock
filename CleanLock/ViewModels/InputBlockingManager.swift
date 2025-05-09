@@ -100,7 +100,7 @@ class InputBlockingManager: ObservableObject {
     // Tipo 14 é para eventos definidos pelo sistema (systemDefined) - teclas especiais (volume, brilho, etc)
     let systemMidiaControlEventType = CGEventType(rawValue: 14)!
         
-   init() {
+    init() {
         Publishers.CombineLatest($isLeftShiftKeyPressed, $isRightShiftKeyPressed)
             .map { $0 && $1 }
             .assign(to: \.areBothShiftKeysPressed, on: self)
@@ -119,7 +119,7 @@ class InputBlockingManager: ObservableObject {
     }
     
     deinit { isCleaning = false }
-    
+   
     func startCleaning() { isCleaning = true }
     
     func stopCleaning() { isCleaning = false }

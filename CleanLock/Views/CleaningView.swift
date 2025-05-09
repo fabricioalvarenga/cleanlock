@@ -19,20 +19,20 @@ struct CleaningView: View {
             .multilineTextAlignment(.center)
             .font(.title3)
             .fontWeight(.bold)
-            .foregroundColor(.secondary)
+            .foregroundStyle(.secondary)
             .padding(.vertical)
             
             HStack {
                 ProminentRoundedRectangle(color: (inputManager.isCleaning && !inputManager.isLeftShiftKeyPressed) ? .black : Color.customAccentColor)
                     .frame(width: 100, height: 80)
                     .overlay(Label("Shift L", systemImage: "shift.fill")
-                        .foregroundColor(Color.white))
+                        .foregroundStyle(Color.white))
                     .padding()
                 
                 ProminentRoundedRectangle(color: (inputManager.isCleaning && !inputManager.isRightShiftKeyPressed) ? .black : Color.customAccentColor)
                     .frame(width: 100, height: 80)
                     .overlay(Label("Shift R", systemImage: "shift.fill")
-                        .foregroundColor(Color.white))
+                        .foregroundStyle(Color.white))
                     .padding()
              }
         }

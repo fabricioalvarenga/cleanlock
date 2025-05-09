@@ -8,10 +8,12 @@
 import SwiftUI
 
 struct LowerHalfView: View {
+    @EnvironmentObject var contentViewController: ContentViewController
+    @EnvironmentObject private var inputManager: InputBlockingManager
     @State private var opacity = 1.0
     
     var body: some View {
-        GeometryReader { geomentry in
+        GeometryReader { geometry in
             VStack {
                 ZStack {
                     RoundedRectangle(cornerRadius: 6)
@@ -19,7 +21,7 @@ struct LowerHalfView: View {
                     
                     VStack(alignment: .leading) {
                         Text("Configurações")
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                             .padding(.horizontal)
                         
                         Divider()
@@ -37,7 +39,7 @@ struct LowerHalfView: View {
                         cleanButtonView()
                     }
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .frame(height: geometry.size.height * 0.80)
                 .padding(.horizontal)
                 
                 HStack {
@@ -45,9 +47,10 @@ struct LowerHalfView: View {
                     Text("Para destravar o teclado e o trackpad, pressione as duas teclas Shift simultaneamente.")
                     .multilineTextAlignment(.center)
                     .font(.system(size: 10))
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     Spacer()
                 }
+                .frame(height: geometry.size.height * 0.1)
                 .padding([.horizontal, .bottom])
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -63,7 +66,7 @@ struct keyboardBlockView: View {
              ProminentRoundedRectangle(color: Color.customAccentColor)
                  .frame(width: 25, height: 25)
                  .overlay(Image(systemName: "keyboard")
-                     .foregroundColor(Color.white)
+                     .foregroundStyle(Color.white)
                      .controlSize(.small))
              
              Text("Bloquear Teclado")
@@ -86,7 +89,7 @@ struct trackpadBlockView: View {
             ProminentRoundedRectangle(color: Color.customAccentColor)
                 .frame(width: 25, height: 25)
                 .overlay(Image(systemName: "rectangle.and.hand.point.up.left")
-                    .foregroundColor(Color.white)
+                    .foregroundStyle(Color.white)
                     .controlSize(.small))
             
             Text("Bloquear Trackpad")
@@ -102,8 +105,9 @@ struct trackpadBlockView: View {
 }
 
 struct cleanButtonView: View {
+    @EnvironmentObject private var contentViewController: ContentViewController
     @EnvironmentObject private var inputManager: InputBlockingManager
-    
+
     var body: some View {
         HStack {
             Spacer()
@@ -118,12 +122,15 @@ struct cleanButtonView: View {
             
             Spacer()
         }
-        .disabled((!inputManager.isKeyboardLocked && !inputManager.isTrackpadLocked) || inputManager.isCleaning)
+        .disabled(!contentViewController.hasAccessibilityPermission)
+        .disabled(!inputManager.isKeyboardLocked && !inputManager.isTrackpadLocked)
+        .disabled(inputManager.isCleaning)
     }
 }
 
 #Preview {
     LowerHalfView()
         .tint(Color.customAccentColor)
+        .environmentObject(ContentViewController())
         .environmentObject(InputBlockingManager())
 }

@@ -21,7 +21,7 @@ struct UpperHalfView: View {
             
             Text("Bloqueie o teclado e o trackpad antes de realizar a limpeza")
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical)
