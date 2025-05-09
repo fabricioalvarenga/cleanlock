@@ -1,2 +1,2 @@
 # cleanup-keyboard
-Cleanup Keyboard App
+CleanLock App
