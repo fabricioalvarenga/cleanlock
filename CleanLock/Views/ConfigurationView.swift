@@ -7,58 +7,46 @@
 
 import SwiftUI
 
-struct LowerHalfView: View {
+struct ConfigurationView: View {
     @EnvironmentObject var contentViewController: ContentViewController
     @EnvironmentObject private var inputManager: InputBlockingManager
     @State private var opacity = 1.0
     
     var body: some View {
-        GeometryReader { geometry in
-            VStack {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(Color.gray.opacity(0.1))
-                    
-                    VStack(alignment: .leading) {
-                        Text("Configurações")
-                            .foregroundStyle(.secondary)
-                            .padding(.horizontal)
-                        
-                        Divider()
-                        
-                        keyboardBlockView()
-                        
-                        Divider()
-                            .padding(.horizontal)
-                        
-                        trackpadBlockView()
-                        
-                        Divider()
-                            .padding(.horizontal)
-                        
-                        cleanButtonView()
-                    }
-                }
-                .frame(height: geometry.size.height * 0.80)
+        VStack(alignment: .leading) {
+            Text("Configurações")
+                .fontWeight(.bold)
                 .padding(.horizontal)
-                
-                HStack {
-                    Spacer()
-                    Text("Para destravar o teclado e o trackpad, pressione as duas teclas Shift simultaneamente.")
+            
+            Divider()
+            
+            keyboardIconView()
+            
+            Divider()
+                .padding(.horizontal)
+            
+            trackpadIconView()
+            
+            Divider()
+                .padding(.horizontal)
+            
+            cleanButtonView()
+            
+            Divider()
+            
+            HStack {
+                Spacer()
+                Text("Para destravar o teclado e o trackpad, pressione as duas teclas Shift simultaneamente.")
                     .multilineTextAlignment(.center)
-                    .font(.system(size: 10))
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
-                    Spacer()
-                }
-                .frame(height: geometry.size.height * 0.1)
-                .padding([.horizontal, .bottom])
+                Spacer()
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 }
 
-struct keyboardBlockView: View {
+struct keyboardIconView: View {
     @EnvironmentObject private var inputManager: InputBlockingManager
     
     var body: some View {
@@ -81,7 +69,7 @@ struct keyboardBlockView: View {
     }
 }
 
-struct trackpadBlockView: View {
+struct trackpadIconView: View {
     @EnvironmentObject private var inputManager: InputBlockingManager
     
     var body: some View {
@@ -129,7 +117,7 @@ struct cleanButtonView: View {
 }
 
 #Preview {
-    LowerHalfView()
+    ConfigurationView()
         .tint(Color.customAccentColor)
         .environmentObject(ContentViewController())
         .environmentObject(InputBlockingManager())

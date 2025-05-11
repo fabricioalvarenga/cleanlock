@@ -27,16 +27,16 @@ struct CleaningView: View {
                     .frame(width: 100, height: 80)
                     .overlay(Label("Shift L", systemImage: "shift.fill")
                         .foregroundStyle(Color.white))
-                    .padding()
+//                    .padding()
                 
                 ProminentRoundedRectangle(color: (inputManager.isCleaning && !inputManager.isRightShiftKeyPressed) ? .black : Color.customAccentColor)
                     .frame(width: 100, height: 80)
                     .overlay(Label("Shift R", systemImage: "shift.fill")
                         .foregroundStyle(Color.white))
-                    .padding()
+//                    .padding()
              }
         }
-        .padding(.bottom)
+//        .padding(.bottom)
     }
 }
 

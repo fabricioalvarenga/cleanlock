@@ -1,2 +1,2 @@
 # cleanlock
-CleanLock App (new version)
+CleanLock App

@@ -17,7 +17,7 @@ struct CleanLockApp: App {
             ContentView()
                 .environmentObject(contentViewController)
                 .environmentObject(inputManager)
-                .frame(width: 500, height: 435)
+                .frame(width: 600, height: 600)
                 .tint(Color.customAccentColor)
                 // Faz com que a janela do aplicativo fique no topo (em frente a outras janelas de outros aplicativos)
 //                .background(WindowAccessor { window in

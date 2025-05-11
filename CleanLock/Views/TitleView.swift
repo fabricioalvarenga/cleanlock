@@ -1,5 +1,5 @@
 //
-//  UpperHalfView.swift
+//  TitleView.swift
 //  CleanLock
 //
 //  Created by FABRICIO ALVARENGA on 06/05/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct UpperHalfView: View {
+struct TitleView: View {
     var body: some View {
         VStack {
             Image(systemName: "macbook")
@@ -23,15 +23,10 @@ struct UpperHalfView: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         }
-        .frame(maxWidth: .infinity)
         .padding(.vertical)
-        .background(Color.gray.opacity(0.1))
-        .cornerRadius(6)
-        .padding(.horizontal)
-        
     }
 }
 
 #Preview {
-    UpperHalfView()
+    TitleView()
 }
