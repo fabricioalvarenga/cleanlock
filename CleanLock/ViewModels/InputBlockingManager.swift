@@ -25,6 +25,8 @@ fileprivate func tapEventCallback(proxy: CGEventTapProxy,
     
     switch eventType {
     case .keyboard:
+        let keyCode = event.getDoubleValueField(.keyboardEventKeycode)
+        print(keyCode)
         // Verifica se é um evento definido pelo sistema (systemDefined) para controle de mídia/volume
 //        if type == monitor.systemMidiaControlEventType {
 //            let data = event.getIntegerValueField(.eventSourceUnixProcessID)
