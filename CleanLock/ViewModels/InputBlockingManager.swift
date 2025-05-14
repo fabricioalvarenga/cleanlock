@@ -14,7 +14,7 @@ import Combine
 fileprivate func tapEventCallback(proxy: CGEventTapProxy,
                       type: CGEventType,
                       event: CGEvent,
-                      refcon: UnsafeMutableRawPointer?) -> Unmanaged<CGEvent>? {
+                                  refcon: UnsafeMutableRawPointer?) -> Unmanaged<CGEvent>? {
     guard let refcon else {
         return Unmanaged.passRetained(event)
     }
@@ -28,21 +28,21 @@ fileprivate func tapEventCallback(proxy: CGEventTapProxy,
         // Verifica se é um evento definido pelo sistema (systemDefined)
         // As teclas de brilho, volume e demais teclas de mídias são controladas por ese tipo de evento
         if type == manager.systemDefinedEventType {
-//            let data = event.getIntegerValueField(CGEventField(rawValue: 45)!)
+            //            let data = event.getIntegerValueField(CGEventField(rawValue: 45)!)
             
-//            let keyFlags = Int32((data & 0xFFFF0000) >> 16)
-//            let keyData = (data & 0xFFFF)
-//            let keyState = (keyFlags & 0xFF00) >> 8
+            //            let keyFlags = Int32((data & 0xFFFF0000) >> 16)
+            //            let keyData = (data & 0xFFFF)
+            //            let keyState = (keyFlags & 0xFF00) >> 8
             
-//            if ((keyData & 0xFF) == 7) || // Volume Up
-//                ((keyData & 0xFF) == 8) || // Volume Down
-//                ((keyData & 0xFF) == 3) { // Mute
-//                
-//                let keyDown = keyState & 0x1
-//                let keyCode = keyData & 0xFF
-//                
-//                print("Tecla de Volume \(keyCode): \(keyDown == 1 ? "Pressionada" : "Liberada")")
-//            }
+            //            if ((keyData & 0xFF) == 7) || // Volume Up
+            //                ((keyData & 0xFF) == 8) || // Volume Down
+            //                ((keyData & 0xFF) == 3) { // Mute
+            //
+            //                let keyDown = keyState & 0x1
+            //                let keyCode = keyData & 0xFF
+            //
+            //                print("Tecla de Volume \(keyCode): \(keyDown == 1 ? "Pressionada" : "Liberada")")
+            //            }
         }
         
         let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
@@ -87,6 +87,10 @@ fileprivate func tapEventCallback(proxy: CGEventTapProxy,
             return nil
         }
     case .trackpad:
+        if type == .leftMouseDown || type == .rightMouseDown {
+            manager.setTrackpadPressed(true)
+        }
+        
         if manager.isTrackpadLocked {
             return nil
         }
@@ -117,6 +121,7 @@ class InputBlockingManager: ObservableObject {
     @Published var isLeftShiftKeyPressed = false
     @Published var isRightShiftKeyPressed = false
     @Published var areBothShiftKeysPressed = false
+    @Published var isTrackpadPressed = false
     @Published var pressedKeyCode: Int64?
 
     private var keyboardTapLockEvent: CFMachPort?
@@ -125,6 +130,7 @@ class InputBlockingManager: ObservableObject {
     private var trackpadRunLoopSource: CFRunLoopSource?
     private var keyboardEventInfo: TapEventInfo?
     private var trackpadEventInfo: TapEventInfo?
+    
     private var cancellables = Set<AnyCancellable>()
     
     // Tipo 14 é para eventos definidos pelo sistema (systemDefined) - teclas especiais (caps lock, volume, brilho, etc)
@@ -203,6 +209,10 @@ class InputBlockingManager: ObservableObject {
     
     func setPressedKeyCodeValue(_ keyCode: Int64?) {
         self.pressedKeyCode = keyCode
+    }
+    
+    func setTrackpadPressed(_ isPressed: Bool) {
+        self.isTrackpadPressed = isPressed
     }
    
     func startCleaning() {

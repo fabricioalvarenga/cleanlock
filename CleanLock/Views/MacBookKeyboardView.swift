@@ -89,10 +89,19 @@ struct MacBookKeyboardView: View {
                 )
                 .shadow(color: .black.opacity(0.4), radius: 1, x: 0, y: 1)
                 .frame(width: trackpadWidth, height: trackpadHeight)
-                .scaleEffect(trackpadPressed ? 0.995 : 1.0)
+                .scaleEffect(trackpadPressed ? 0.9 : 1.0)
                 .animation(.spring(response: 0.1), value: trackpadPressed)
         }
         .buttonStyle(PlainButtonStyle())
+        .onChange(of: inputManager.isTrackpadPressed) { _, trackpadPressed in
+            // Simula o pressionamento das teclas
+            self.trackpadPressed = trackpadPressed
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.trackpadPressed = false
+                inputManager.setTrackpadPressed(false)
+            }
+        }
     }
     
     // Cada linha do teclado ANSI EUA tem o seguinte tamanho em pontos para um frame da janela 600 x 600
@@ -155,7 +164,6 @@ struct MacBookKeyboardView: View {
                 self.pressedKey = nil
                 inputManager.setPressedKeyCodeValue(nil)
             }
-
         }
     }
 
