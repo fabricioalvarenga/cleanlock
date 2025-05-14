@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @EnvironmentObject private var contentViewController: ContentViewController
+    @EnvironmentObject private var contentViewModel: ContentViewModel
     @EnvironmentObject private var inputManager: InputBlockingManager
     @Environment(\.scenePhase) var scenePhase
     @State private var titleViewOpacity = 1.0
@@ -46,6 +46,7 @@ struct ContentView: View {
             }
         }
         .onAppear {
+            print("appeared")
             // Inicializa os estados de opacidade baseados no estado do inputManager
             titleViewOpacity = inputManager.isCleaning ? 0.0 : 1.0
             cleaningViewOpacity = inputManager.isCleaning ? 1.0 : 0.0
@@ -67,12 +68,12 @@ struct ContentView: View {
                 }
             }
         }
-        .alert(isPresented: $contentViewController.showAccessibilityPermissionAlert) {
+        .alert(isPresented: $contentViewModel.showAccessibilityPermissionAlert) {
             Alert(
                 title: Text("Permissões Necessárias"),
                 message: Text("Este aplicativo precisa de permissão de acessibilidade para funcionar. Você será levado às Preferências do Sistema para conceder a permissão necessária."),
                 primaryButton: .default(Text("Abrir Preferências"),
-                                        action: { contentViewController.openAccessibilityPreferences() }),
+                                        action: { contentViewModel.openAccessibilityPreferences() }),
                 secondaryButton: .cancel(Text("Negar Permissão"),
                                          action: { NSApplication.shared.terminate(nil) }))
         }

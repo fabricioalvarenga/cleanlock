@@ -9,7 +9,7 @@ import SwiftUI
 
 @main
 struct CleanLockApp: App {
-    @StateObject private var contentViewController = ContentViewController()
+    @StateObject private var contentViewController = ContentViewModel()
     @StateObject private var inputManager = InputBlockingManager()
     
     var body: some Scene {

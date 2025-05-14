@@ -7,13 +7,25 @@
 
 import SwiftUI
 import Cocoa
+import Combine
 
-class ContentViewController: ObservableObject {
+class ContentViewModel: ObservableObject {
     @Published var hasAccessibilityPermission = false
     @Published var showAccessibilityPermissionAlert = false
     
+    private var cancellables = Set<AnyCancellable>()
+
+    // Timer para verificar a cada intervalo se existem permissões de acessibilidade ou se elas foram canceladas
+    var timer = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
+    
     init() {
-        setupActivateNotificationObserver()
+        // Faz a primeira checagem de permissões de acessibilidade e configura o timer para chegar novamente a cada intervalo de tempo
+        checkAccessibilityPermission()
+        
+        timer.sink { _ in
+            self.checkAccessibilityPermission()
+        }
+        .store(in: &cancellables)
     }
     
     deinit {
@@ -31,17 +43,5 @@ class ContentViewController: ObservableObject {
     
     func openAccessibilityPreferences() {
         NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!)
-    }
-    
-    // Monitora quando o aplicativo se torna ativo novamente
-    private func setupActivateNotificationObserver() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(applicationDidBecameActive),
-                                               name: NSApplication.didBecomeActiveNotification,
-                                               object: nil)
-    }
-    
-    @objc private func applicationDidBecameActive() {
-        checkAccessibilityPermission()
     }
 }

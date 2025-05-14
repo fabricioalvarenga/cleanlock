@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ConfigurationView: View {
-    @EnvironmentObject var contentViewController: ContentViewController
+    @EnvironmentObject var contentViewController: ContentViewModel
     @EnvironmentObject private var inputManager: InputBlockingManager
     @State private var opacity = 1.0
     
@@ -96,7 +96,7 @@ struct trackpadIconView: View {
 }
 
 struct cleanButtonView: View {
-    @EnvironmentObject private var contentViewController: ContentViewController
+    @EnvironmentObject private var contentViewController: ContentViewModel
     @EnvironmentObject private var inputManager: InputBlockingManager
 
     var body: some View {
@@ -122,6 +122,6 @@ struct cleanButtonView: View {
 #Preview {
     ConfigurationView()
         .tint(Color.customAccentColor)
-        .environmentObject(ContentViewController())
+        .environmentObject(ContentViewModel())
         .environmentObject(InputBlockingManager())
 }

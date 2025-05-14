@@ -10,7 +10,6 @@ import SwiftUI
 struct MacBookKeyboardView: View {
     @EnvironmentObject private var inputManager: InputBlockingManager
     @State private var pressedKey: String? = nil
-    @State private var trackpadPressed: Bool = false
 
     // Dimensões relativas
     private var horizontalSpaceBetweenKeys: CGFloat {
@@ -84,16 +83,13 @@ struct MacBookKeyboardView: View {
                         .stroke(Color.black.opacity(0.35), lineWidth: 0.5) // Borda sutil
                 )
                 .frame(width: trackpadWidth, height: trackpadHeight)
-                .scaleEffect(trackpadPressed ? 0.9 : 1.0)
-                .animation(.spring(response: 0.1), value: trackpadPressed)
+                .scaleEffect(inputManager.isTrackpadPressed ? 0.9 : 1.0)
+                .animation(.spring(response: 0.1), value: inputManager.isTrackpadPressed)
         }
         .buttonStyle(PlainButtonStyle())
         .onChange(of: inputManager.isTrackpadPressed) { _, trackpadPressed in
-            // Simula o pressionamento das teclas
-            self.trackpadPressed = trackpadPressed
-            
+            // Simula o pressionamento das teclas juntamente com 'scaleEffect' aplicado
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                self.trackpadPressed = false
                 inputManager.setTrackpadPressed(false)
             }
         }
