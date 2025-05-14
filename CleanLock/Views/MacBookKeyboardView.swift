@@ -53,20 +53,17 @@ struct MacBookKeyboardView: View {
 
     var body: some View {
         VStack(spacing: 2) {
-            // Container do teclado com aparência de baixo relevo
             ZStack {
                 // Background do teclado
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.black.opacity(0.2))
-                    .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(Color.black.opacity(0.2)) // Cor de fundo mais próxima do alumínio
                     .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.gray.opacity(0.1), lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(Color.black.opacity(0.35), lineWidth: 0.5) // Borda sutil
                     )
-                    .frame(
-                        width: keyboardBackgroundWidth,
-                        height: keyboardBackgroundHeight)
-
+                    .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2) // Sombra suave para profundidade
+                    .frame(width: keyboardBackgroundWidth, height: keyboardBackgroundHeight)
+                
                 // Conteúdo do teclado
                 keyRows(of: inputManager.keyboard, containerDimension: geometry)
             }
@@ -76,7 +73,6 @@ struct MacBookKeyboardView: View {
         }
     }
 
-    // Novo componente para o trackpad
     @ViewBuilder
     func trackpadView(containerDimension geometry: GeometryProxy) -> some View {
         Button {
@@ -85,9 +81,8 @@ struct MacBookKeyboardView: View {
                 .fill(Color.black.opacity(0.2))
                 .overlay(
                     RoundedRectangle(cornerRadius: 6)
-                        .stroke(Color.gray.opacity(0.15), lineWidth: 1)
+                        .stroke(Color.black.opacity(0.35), lineWidth: 0.5) // Borda sutil
                 )
-                .shadow(color: .black.opacity(0.4), radius: 1, x: 0, y: 1)
                 .frame(width: trackpadWidth, height: trackpadHeight)
                 .scaleEffect(trackpadPressed ? 0.9 : 1.0)
                 .animation(.spring(response: 0.1), value: trackpadPressed)
@@ -135,12 +130,6 @@ struct MacBookKeyboardView: View {
                 // Fundo da tecla com baixo relevo
                 RoundedRectangle(cornerRadius: 3)
                     .fill(Color(white: 0.15))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 3)
-                            .stroke(Color.black.opacity(0.5), lineWidth: 0.6)
-                            .shadow(color: .white.opacity(0.05), radius: 0.6, x: 0, y: 0.6)
-                    )
-                    .shadow(color: .black.opacity(0.5), radius: 0.6, x: 0, y: 0.6)
                 
                 // Texto da tecla
                 Text(keyLabel(for: key))

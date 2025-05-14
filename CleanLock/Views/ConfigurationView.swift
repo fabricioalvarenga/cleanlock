@@ -36,12 +36,15 @@ struct ConfigurationView: View {
             
             HStack {
                 Spacer()
-                Text("Para destravar o teclado e o trackpad, pressione as duas teclas Shift simultaneamente.")
+                
+                Text("Para destravar o teclado e o trackpad, pressione as duas teclas Shift simultaneamente")
                     .multilineTextAlignment(.center)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
+                
                 Spacer()
             }
+            .padding(.top, 30)
         }
     }
 }

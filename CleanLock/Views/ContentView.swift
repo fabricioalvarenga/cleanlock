@@ -20,34 +20,26 @@ struct ContentView: View {
             ZStack {
                 VStack {
                     TitleView()
-                        .frame(width: geometry.size.width * 0.95, height: geometry.size.height * 0.485)
-                        .background(Color.gray.opacity(0.1))
-                        .cornerRadius(6)
+                        .customViewStyle(geometry: geometry)
                     
                     Divider()
                         .padding(.horizontal)
                     
                     ConfigurationView()
-                        .frame(width: geometry.size.width * 0.95, height: geometry.size.height * 0.46)
-                        .background(Color.gray.opacity(0.1))
-                        .cornerRadius(6)
+                        .customViewStyle(geometry: geometry)
                 }
                 .opacity(titleViewOpacity)
                 .zIndex(inputManager.isCleaning ? 0 : 1)
                 
                 VStack {
                     MacBookKeyboardView(geometry: geometry)
-                        .frame(width: geometry.size.width * 0.95, height: geometry.size.height * 0.485)
-                        .background(Color.gray.opacity(0.1))
-                        .cornerRadius(6)
+                        .customViewStyle(geometry: geometry)
                     
                      Divider()
                         .padding(.horizontal)
                     
                     CleaningView()
-                        .frame(width: geometry.size.width * 0.95, height: geometry.size.height * 0.46)
-                        .background(Color.gray.opacity(0.1))
-                        .cornerRadius(6)
+                        .customViewStyle(geometry: geometry)
                 }
                 .opacity(cleaningViewOpacity)
                 .zIndex(inputManager.isCleaning ? 1 : 0)
@@ -86,6 +78,15 @@ struct ContentView: View {
         }
     }
     
+}
+
+fileprivate extension View {
+    func customViewStyle(geometry: GeometryProxy) -> some View {
+        self
+            .frame(width: geometry.size.width * 0.95, height: geometry.size.height * 0.4725)
+            .background(Color.gray.opacity(0.1))
+            .cornerRadius(6)
+    }
 }
 
 #Preview {
