@@ -64,16 +64,16 @@ struct KeyboardView: View {
                     .frame(width: keyboardBackgroundWidth, height: keyboardBackgroundHeight)
                 
                 // Conteúdo do teclado
-                keyRows(of: inputManager.keyboard, containerDimension: geometry)
+                keyRows(of: inputManager.keyboard)
             }
 
             // Trackpad
-            trackpadView(containerDimension: geometry)
+            trackpadView()
         }
     }
 
     @ViewBuilder
-    func trackpadView(containerDimension geometry: GeometryProxy) -> some View {
+    func trackpadView() -> some View {
         Button {
         } label: {
             RoundedRectangle(cornerRadius: 6)
@@ -104,12 +104,12 @@ struct KeyboardView: View {
     // Linha 6:  7 * 20 (teclas normais) +  9 * 3 (espaços entre as teclas) + 2 * 20 * 1.3 (teclas command) + 1 * 20 * 5.7 (tecla espaço)
 
     @ViewBuilder
-    func keyRows(of keyboard: [[(Int64, String)]], containerDimension geometry: GeometryProxy) -> some View {
+    func keyRows(of keyboard: [[(Int64, String)]]) -> some View {
         VStack(spacing: verticalSpaceBetweenKeys) {
             ForEach(keyboard.indices, id: \.self) { rowIndex in
                 HStack(spacing: horizontalSpaceBetweenKeys) {
                     ForEach(keyboard[rowIndex], id: \.0) { key in
-                        keyButton(keyCode: key.0, viewDimension: geometry)
+                        keyButton(keyCode: key.0)
                     }
                 }
             }
@@ -117,7 +117,7 @@ struct KeyboardView: View {
     }
 
     @ViewBuilder
-    func keyButton(keyCode: Int64, viewDimension geometry: GeometryProxy) -> some View {
+    func keyButton(keyCode: Int64) -> some View {
         let keyString = inputManager.findKeyLabel(for: keyCode)!
         let keyWidthScaleFactor = inputManager.specialKeyWidths[keyString] ?? inputManager.standardKeyWidth
 
