@@ -152,7 +152,7 @@ class InputBlockingManager: ObservableObject {
     ]
     
     // Layout dos teclados ANSI EUA
-    let keyboard =
+    let keyboard: [[(Int64, String)]] =
     [
         [(53, "esc"), (1001, "F1"), (1002, "F2"), (160, "F3"), (177, "F4"), (176, "F5"), (178, "F6"), (1003, "F7"),
          (1004, "F8"), (1005, "F9"), (1006, "F10"), (1007, "F11"), (1008, "F12"), (1009, "on")],
@@ -179,7 +179,9 @@ class InputBlockingManager: ObservableObject {
             .assign(to: \.areBothShiftKeysPressed, on: self)
             .store(in: &cancellables)
         
-        $isCleaning.map(\.self).sink { [weak self] isCleaning in
+        $isCleaning
+            .debounce(for: .milliseconds(10), scheduler: DispatchQueue.main) // Evita atualizações simultâneas
+            .sink { [weak self] isCleaning in
             if isCleaning {
                 self?.startMonitoring()
             } else {

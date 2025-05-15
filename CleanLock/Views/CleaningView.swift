@@ -34,6 +34,11 @@ struct CleaningView: View {
                         .foregroundStyle(Color.white))
              }
         }
+        .onChange(of: inputManager.areBothShiftKeysPressed) { _, pressed in
+            if pressed {
+                inputManager.stopCleaning()
+            }
+        }
     }
 }
 
