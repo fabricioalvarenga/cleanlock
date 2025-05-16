@@ -106,7 +106,9 @@ struct cleanButtonView: View {
             Spacer()
             
             Button {
-                path.append(.keyboardView)
+                withAnimation {
+                    path.append(.keyboardView)
+                }
                 inputManager.startCleaning()
             } label: {
                 Label("Iniciar Limpeza", systemImage: "drop.fill")

@@ -13,7 +13,6 @@ struct ContentView: View {
     
     @StateObject private var windowFocusMonitor = WindowFocusMonitor()
     
-//    @State private var timer: Timer?
     @State private var path: [Route] = []
     
     var body: some View {
@@ -30,6 +29,7 @@ struct ContentView: View {
                         .customViewStyle(viewDimension: geometry.size)
                 }
             }
+            .opacity(contentViewModel.contentViewOpacity)
             .navigationDestination(for: Route.self) { destination in
                 switch destination {
                 case .keyboardView:
@@ -44,23 +44,21 @@ struct ContentView: View {
                     }
                 }
             }
-//            .onChange(of: inputManager.isCleaning) { _, isCleaning in
-//                if isCleaning {
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-//                        withAnimation(.smooth(duration: 0.5)) { contentViewModel.setTitleViewOpacity(0.0) }
-//                        withAnimation(.smooth(duration: 0.5)) { contentViewModel.setCleaningViewOpacity(1.0) }
-//                    }
-//                } else {
-//                    // Atrasa a transição entre as telas apenas para que o usuário
-//                    // possa perceber a mudança de cor dos botões Shift desenhados na tela
-////                    timer?.invalidate()
-////                    timer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: false) { _ in
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-//                        withAnimation(.smooth(duration: 0.5)) { contentViewModel.setTitleViewOpacity(1.0) }
-//                        withAnimation(.smooth(duration: 0.5)) { contentViewModel.setCleaningViewOpacity(0.0) }
-//                    }
-//                }
-//            }
+            .onChange(of: inputManager.isCleaning) { _, isCleaning in
+                if isCleaning {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                        withAnimation(.smooth(duration: 0.5)) { contentViewModel.setContentViewOpacity(0.0) }
+                        withAnimation(.smooth(duration: 0.5)) { contentViewModel.setKeyboardViewOpacity(1.0) }
+                    }
+                } else {
+                    // Atrasa a transição entre as telas apenas para que o usuário
+                    // possa perceber a mudança de cor dos botões Shift desenhados na tela
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                        withAnimation(.smooth(duration: 0.5)) { contentViewModel.setContentViewOpacity(1.0) }
+                        withAnimation(.smooth(duration: 0.5)) { contentViewModel.setKeyboardViewOpacity(0.0) }
+                    }
+                }
+            }
             .alert(isPresented: $contentViewModel.showAccessibilityPermissionAlert) {
                 Alert(
                     title: Text("Permissões Necessárias"),

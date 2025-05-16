@@ -43,11 +43,14 @@ struct KeyboardView: View {
                     .customViewStyle(viewDimension: geometry.size)
             }
         }
+        .opacity(contentViewModel.keyboardViewOpacity)
         .navigationBarBackButtonHidden(true)
         .onChange(of: inputManager.areBothShiftKeysPressed) { _, pressed in
             if pressed {
                 inputManager.stopCleaning()
-                path.removeAll()
+                withAnimation {
+                    path.removeAll()
+                }
             }
         }
     }

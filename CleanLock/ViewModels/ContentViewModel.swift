@@ -12,8 +12,8 @@ import Combine
 class ContentViewModel: ObservableObject {
     @Published var hasAccessibilityPermission = false
     @Published var showAccessibilityPermissionAlert = false
-    @Published var titleViewOpacity = 1.0
-    @Published var cleaningViewOpacity = 1.0
+    @Published var contentViewOpacity = 1.0
+    @Published var keyboardViewOpacity = 1.0
     
     init() {
         // Faz a primeira checagem de permissões de acessibilidade e configura o timer para chegar novamente a cada intervalo de tempo
@@ -33,11 +33,11 @@ class ContentViewModel: ObservableObject {
         NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!)
     }
     
-    func setTitleViewOpacity(_ opacity: CGFloat) {
-        titleViewOpacity = opacity
+    func setContentViewOpacity(_ opacity: CGFloat) {
+        contentViewOpacity = opacity
     }
     
-    func setCleaningViewOpacity(_ opacity: CGFloat) {
-        cleaningViewOpacity = opacity
+    func setKeyboardViewOpacity(_ opacity: CGFloat) {
+        keyboardViewOpacity = opacity
     }
 }
