@@ -46,16 +46,18 @@ struct ContentView: View {
             }
             .onChange(of: inputManager.isCleaning) { _, isCleaning in
                 if isCleaning {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                        withAnimation(.smooth(duration: 0.5)) { contentViewModel.setContentViewOpacity(0.0) }
-                        withAnimation(.smooth(duration: 0.5)) { contentViewModel.setKeyboardViewOpacity(1.0) }
+                    // Adiciona um pequeno atraso na checagem para evitar: 'Update NavigationRequestObserver tried to update multiple times per frame'
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        contentViewModel.setContentViewOpacity(0.0)
+                        contentViewModel.setKeyboardViewOpacity(1.0)
                     }
                 } else {
                     // Atrasa a transição entre as telas apenas para que o usuário
                     // possa perceber a mudança de cor dos botões Shift desenhados na tela
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                        withAnimation(.smooth(duration: 0.5)) { contentViewModel.setContentViewOpacity(1.0) }
-                        withAnimation(.smooth(duration: 0.5)) { contentViewModel.setKeyboardViewOpacity(0.0) }
+                    // E tambmém para evitar: 'Update NavigationRequestObserver tried to update multiple times per frame'
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        contentViewModel.setContentViewOpacity(1.0)
+                        contentViewModel.setKeyboardViewOpacity(0.0)
                     }
                 }
             }

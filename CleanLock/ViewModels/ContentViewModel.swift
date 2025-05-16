@@ -34,10 +34,14 @@ class ContentViewModel: ObservableObject {
     }
     
     func setContentViewOpacity(_ opacity: CGFloat) {
-        contentViewOpacity = opacity
+        withAnimation {
+            contentViewOpacity = opacity
+        }
     }
     
     func setKeyboardViewOpacity(_ opacity: CGFloat) {
-        keyboardViewOpacity = opacity
+        withAnimation {
+            keyboardViewOpacity = opacity
+        }
     }
 }
