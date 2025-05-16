@@ -22,7 +22,8 @@ struct ProminentRoundedRectangle: View {
             .overlay(
                 RoundedRectangle(cornerRadius: 6, style: .continuous)
                     .stroke((color ?? .primary).opacity(0.7), lineWidth: 0.5))
-            .shadow(color: (color ?? .primary).opacity(0.2), radius: 2, x: 0, y: 1)
+            .shadow(color: Color.black.opacity(0.2), radius: 6, x: 3, y: 3)
+            .shadow(color: Color.white.opacity(0.2), radius: 6, x: -3, y: -3)
     }
 }
 
