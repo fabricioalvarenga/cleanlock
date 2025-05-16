@@ -48,9 +48,7 @@ struct KeyboardView: View {
         .onChange(of: inputManager.areBothShiftKeysPressed) { _, pressed in
             if pressed {
                 inputManager.stopCleaning()
-                withAnimation {
-                    path.removeAll()
-                }
+                path.removeAll()
             }
         }
     }

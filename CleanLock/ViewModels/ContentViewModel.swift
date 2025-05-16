@@ -13,7 +13,7 @@ class ContentViewModel: ObservableObject {
     @Published var hasAccessibilityPermission = false
     @Published var showAccessibilityPermissionAlert = false
     @Published var contentViewOpacity = 1.0
-    @Published var keyboardViewOpacity = 1.0
+    @Published var keyboardViewOpacity = 0.0
     
     init() {
         // Faz a primeira checagem de permissões de acessibilidade e configura o timer para chegar novamente a cada intervalo de tempo
