@@ -10,7 +10,6 @@ import SwiftUI
 struct KeyboardView: View {
     @EnvironmentObject private var contentViewModel: ContentViewModel
     @EnvironmentObject private var inputManager: InputBlockingManager
-    @State private var pressedKey: Int64? = nil
     @State private var horizontalSpaceBetweenKeys: CGFloat = .zero
     @State private var verticalSpaceBetweenKeys: CGFloat = .zero
     @State private var keyboardBackgroundWidth: CGFloat = .zero
@@ -20,6 +19,7 @@ struct KeyboardView: View {
     @State private var keyWidth: CGFloat = .zero
     @State private var keyHeight: CGFloat = .zero
     @State private var keyLabelSize: CGFloat = .zero
+    @State private var pressedKey: Int64? = nil
     
     @Binding var path: [Route]
     
