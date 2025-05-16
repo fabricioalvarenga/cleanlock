@@ -53,6 +53,19 @@ struct KeyboardView: View {
         }
     }
     
+    private func updateDimensions(viewDimension size: CGSize) {
+        DispatchQueue.main.async {
+            horizontalSpaceBetweenKeys = size.width / 200
+            verticalSpaceBetweenKeys = size.height / 200
+            keyboardBackgroundWidth = size.width / 1.75
+            keyboardBackgroundHeight = size.height / 4.1075
+            trackpadWidth = size.width / 4
+            trackpadHeight = size.height / 6.6667
+            keyWidth = size.width / 30
+            keyHeight = size.height / 30
+            keyLabelSize = size.width / 82.475
+        }
+    }
     
     @ViewBuilder
     func trackpadView() -> some View {
@@ -148,20 +161,6 @@ struct KeyboardView: View {
         }
     }
     
-    private func updateDimensions(viewDimension size: CGSize) {
-        DispatchQueue.main.async {
-            horizontalSpaceBetweenKeys = size.width / 200
-            verticalSpaceBetweenKeys = size.height / 200
-            keyboardBackgroundWidth = size.width / 1.75
-            keyboardBackgroundHeight = size.height / 4.1075
-            trackpadWidth = size.width / 4
-            trackpadHeight = size.height / 6.6667
-            keyWidth = size.width / 30
-            keyHeight = size.height / 30
-            keyLabelSize = size.width / 82.475
-        }
-    }
-
     // Função para retornar o rótulo apropriado para cada tecla
     func keyLabel(for key: String) -> String {
         switch key {
