@@ -10,7 +10,8 @@ import SwiftUI
 struct ConfigurationView: View {
     @EnvironmentObject var contentViewModel: ContentViewModel
     @EnvironmentObject private var inputManager: InputBlockingManager
-    @State private var opacity = 1.0
+    
+    @Binding var path: [Route]
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -30,7 +31,7 @@ struct ConfigurationView: View {
             Divider()
                 .padding(.horizontal)
             
-            cleanButtonView()
+            cleanButtonView(path: $path)
             
             Divider()
             
@@ -98,12 +99,14 @@ struct trackpadIconView: View {
 struct cleanButtonView: View {
     @EnvironmentObject private var contentViewModel: ContentViewModel
     @EnvironmentObject private var inputManager: InputBlockingManager
+    @Binding var path: [Route]
 
     var body: some View {
         HStack {
             Spacer()
             
             Button {
+                path.append(.keyboardView)
                 inputManager.startCleaning()
             } label: {
                 Label("Iniciar Limpeza", systemImage: "drop.fill")
@@ -117,11 +120,4 @@ struct cleanButtonView: View {
         .disabled(!inputManager.isKeyboardLocked && !inputManager.isTrackpadLocked)
         .disabled(inputManager.isCleaning)
     }
-}
-
-#Preview {
-    ConfigurationView()
-        .tint(Color.customAccentColor)
-        .environmentObject(ContentViewModel())
-        .environmentObject(InputBlockingManager())
 }

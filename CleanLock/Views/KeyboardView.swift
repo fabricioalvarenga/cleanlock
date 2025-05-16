@@ -8,70 +8,51 @@
 import SwiftUI
 
 struct KeyboardView: View {
+    @EnvironmentObject private var contentViewModel: ContentViewModel
     @EnvironmentObject private var inputManager: InputBlockingManager
     @State private var pressedKey: Int64? = nil
+    @State private var horizontalSpaceBetweenKeys: CGFloat = .zero
+    @State private var verticalSpaceBetweenKeys: CGFloat = .zero
+    @State private var keyboardBackgroundWidth: CGFloat = .zero
+    @State private var keyboardBackgroundHeight: CGFloat = .zero
+    @State private var trackpadWidth: CGFloat = .zero
+    @State private var trackpadHeight: CGFloat = .zero
+    @State private var keyWidth: CGFloat = .zero
+    @State private var keyHeight: CGFloat = .zero
+    @State private var keyLabelSize: CGFloat = .zero
     
-    var geometry: GeometryProxy
-
-    // Dimensões relativas
-    private var horizontalSpaceBetweenKeys: CGFloat {
-        geometry.size.width / 200
-    }
-
-    private var verticalSpaceBetweenKeys: CGFloat {
-        geometry.size.width / 200
-    }
-
-    private var keyboardBackgroundWidth: CGFloat {
-        geometry.size.width / 1.75
-    }
-
-    private var keyboardBackgroundHeight: CGFloat {
-        geometry.size.height / 4.1075
-    }
-
-    private var trackpadWidth: CGFloat {
-        geometry.size.width / 4
-    }
-
-    private var trackpadHeight: CGFloat {
-        geometry.size.height / 6.6667
-    }
+    @Binding var path: [Route]
     
-    private var keyWidth: CGFloat {
-        geometry.size.width / 30
-    }
-    
-    private var keyHeight: CGFloat {
-        geometry.size.height / 30
-    }
-
-    private var keyLabelSize: CGFloat {
-        geometry.size.width / 82.475
-    }
-
     var body: some View {
-        VStack(spacing: 2) {
-            ZStack {
-                // Background do teclado
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(Color.black.opacity(0.2)) // Cor de fundo mais próxima do alumínio
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6)
-                            .stroke(Color.black.opacity(0.35), lineWidth: 0.5) // Borda sutil
-                    )
-                    .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2) // Sombra suave para profundidade
-                    .frame(width: keyboardBackgroundWidth, height: keyboardBackgroundHeight)
+        GeometryReader { geometry in
+            // Atualiza as medidas relativas utilizadas nas views
+            let _ = updateDimensions(viewDimension: geometry.size)
+            
+            VStack {
+                VStack {
+                    keyboard(with: inputManager.keys)
+                    
+                    trackpadView()
+                }
+                .customViewStyle(viewDimension: geometry.size)
                 
-                // Conteúdo do teclado
-                keyRows(of: inputManager.keyboard)
+                Divider()
+                    .padding(.horizontal)
+                
+                CleaningView()
+                    .customViewStyle(viewDimension: geometry.size)
             }
-
-            // Trackpad
-            trackpadView()
+        }
+        .navigationBarBackButtonHidden(true)
+        .onChange(of: inputManager.areBothShiftKeysPressed) { _, pressed in
+            if pressed {
+                inputManager.stopCleaning()
+                path.removeAll()
+            }
         }
     }
-
+    
+    
     @ViewBuilder
     func trackpadView() -> some View {
         Button {
@@ -104,12 +85,25 @@ struct KeyboardView: View {
     // Linha 6:  7 * 20 (teclas normais) +  9 * 3 (espaços entre as teclas) + 2 * 20 * 1.3 (teclas command) + 1 * 20 * 5.7 (tecla espaço)
 
     @ViewBuilder
-    func keyRows(of keyboard: [[(Int64, String)]]) -> some View {
-        VStack(spacing: verticalSpaceBetweenKeys) {
-            ForEach(keyboard.indices, id: \.self) { rowIndex in
-                HStack(spacing: horizontalSpaceBetweenKeys) {
-                    ForEach(keyboard[rowIndex], id: \.0) { key in
-                        keyButton(keyCode: key.0)
+    func keyboard(with keys: [[(Int64, String)]]) -> some View {
+        ZStack {
+            // Background do teclado
+            RoundedRectangle(cornerRadius: 6)
+                .fill(Color.black.opacity(0.2)) // Cor de fundo mais próxima do alumínio
+                .overlay(
+                    RoundedRectangle(cornerRadius: 6)
+                        .stroke(Color.black.opacity(0.35), lineWidth: 0.5) // Borda sutil
+                )
+                .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2) // Sombra suave para profundidade
+                .frame(width: keyboardBackgroundWidth, height: keyboardBackgroundHeight)
+            
+            // Teclas do teclado
+            VStack(spacing: verticalSpaceBetweenKeys) {
+                ForEach(keys.indices, id: \.self) { rowIndex in
+                    HStack(spacing: horizontalSpaceBetweenKeys) {
+                        ForEach(keys[rowIndex], id: \.0) { key in
+                            keyButton(keyCode: key.0)
+                        }
                     }
                 }
             }
@@ -150,6 +144,20 @@ struct KeyboardView: View {
                 self.pressedKey = nil
                 inputManager.setPressedKeyCodeValue(nil)
             }
+        }
+    }
+    
+    private func updateDimensions(viewDimension size: CGSize) {
+        DispatchQueue.main.async {
+            horizontalSpaceBetweenKeys = size.width / 200
+            verticalSpaceBetweenKeys = size.height / 200
+            keyboardBackgroundWidth = size.width / 1.75
+            keyboardBackgroundHeight = size.height / 4.1075
+            trackpadWidth = size.width / 4
+            trackpadHeight = size.height / 6.6667
+            keyWidth = size.width / 30
+            keyHeight = size.height / 30
+            keyLabelSize = size.width / 82.475
         }
     }
 
