@@ -55,7 +55,7 @@ struct KeyboardView: View {
         .onChange(of: inputManager.areBothShiftKeysPressed) { _, pressed in
             if pressed {
                 // Remover a view do path faz que com .onDisappear seja acionado
-                path.removeAll()
+                path.removeLast()
             }
         }
         .onDisappear {
@@ -97,7 +97,7 @@ struct KeyboardView: View {
         .buttonStyle(PlainButtonStyle())
         .onChange(of: inputManager.isTrackpadPressed) { _, trackpadPressed in
             // Simula o pressionamento das teclas juntamente com 'scaleEffect' aplicado
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 inputManager.setTrackpadPressed(false)
             }
         }
@@ -167,7 +167,7 @@ struct KeyboardView: View {
 
             self.pressedKey = pressedKeyCode
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 self.pressedKey = nil
                 inputManager.setPressedKeyCodeValue(nil)
             }
