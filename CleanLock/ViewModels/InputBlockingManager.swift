@@ -115,14 +115,15 @@ fileprivate class TapEventInfo {
 }
 
 class InputBlockingManager: ObservableObject {
-    @Published var isCleaning = false
     @Published var isKeyboardLocked = true
     @Published var isTrackpadLocked = true
     @Published var isLeftShiftKeyPressed = false
     @Published var isRightShiftKeyPressed = false
-    @Published var areBothShiftKeysPressed = false
-    @Published var isTrackpadPressed = false
-    @Published var pressedKeyCode: Int64?
+    
+    @Published private(set) var isCleaning = false
+    @Published private(set) var areBothShiftKeysPressed = false
+    @Published private(set) var isTrackpadPressed = false
+    @Published private(set) var pressedKeyCode: Int64?
 
     private var keyboardTapLockEvent: CFMachPort?
     private var trackpadTapLockEvent: CFMachPort?

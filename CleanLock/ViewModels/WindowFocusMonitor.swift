@@ -10,7 +10,7 @@ import AppKit
 import Combine
 
 class WindowFocusMonitor: ObservableObject {
-    @Published var isKeyWindow = false // Verifica se a janela está recebendo eventos de teclado e, se sim, significa que ela tem o foco
+    @Published private(set) var isKeyWindow = false // Verifica se a janela está recebendo eventos de teclado e, se sim, significa que ela tem o foco
     
     private var cancellables: Set<AnyCancellable> = []
     

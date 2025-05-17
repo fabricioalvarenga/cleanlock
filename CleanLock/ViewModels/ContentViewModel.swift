@@ -10,8 +10,8 @@ import Cocoa
 import Combine
 
 class ContentViewModel: ObservableObject {
-    @Published var contentViewOpacity = 1.0
-    @Published var keyboardViewOpacity = 0.0
+    @Published private(set) var contentViewOpacity = 1.0
+    @Published private(set) var keyboardViewOpacity = 0.0
     
     func setContentViewOpacity(_ opacity: CGFloat) {
         withAnimation {
