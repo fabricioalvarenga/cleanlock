@@ -10,6 +10,7 @@ import SwiftUI
 struct KeyboardView: View {
     @EnvironmentObject private var contentViewModel: ContentViewModel
     @EnvironmentObject private var inputManager: InputBlockingManager
+    @EnvironmentObject private var accessibilityMonitor: AccessibilityMonitor
     
     @State private var horizontalSpaceBetweenKeys: CGFloat = .zero
     @State private var verticalSpaceBetweenKeys: CGFloat = .zero
@@ -46,6 +47,11 @@ struct KeyboardView: View {
         }
         .opacity(contentViewModel.keyboardViewOpacity)
         .navigationBarBackButtonHidden(true)
+        .onChange(of: accessibilityMonitor.hasAccessibilityPermission) { _, hasAccessibilityPermission in
+            if !hasAccessibilityPermission {
+                path.removeLast()
+            }
+        }
         .onChange(of: inputManager.areBothShiftKeysPressed) { _, pressed in
             if pressed {
                 // Remover a view do path faz que com .onDisappear seja acionado

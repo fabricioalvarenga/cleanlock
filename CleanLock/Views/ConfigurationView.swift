@@ -116,7 +116,6 @@ struct cleanButtonView: View {
             
             Spacer()
         }
-        .disabled(!contentViewModel.hasAccessibilityPermission)
         .disabled(!inputManager.isKeyboardLocked && !inputManager.isTrackpadLocked)
         .disabled(inputManager.isCleaning)
     }

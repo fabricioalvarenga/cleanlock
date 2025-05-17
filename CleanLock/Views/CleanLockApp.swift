@@ -9,14 +9,16 @@ import SwiftUI
 
 @main
 struct CleanLockApp: App {
-    @StateObject private var contentViewController = ContentViewModel()
+    @StateObject private var contentViewModel = ContentViewModel()
     @StateObject private var inputManager = InputBlockingManager()
+    @StateObject private var accessbilityMonitor = AccessibilityMonitor()
     
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(contentViewController)
+                .environmentObject(contentViewModel)
                 .environmentObject(inputManager)
+                .environmentObject(accessbilityMonitor)
                 .frame(width: 600, height: 600)
                 .tint(Color.customAccentColor)
                 // Faz com que a janela do aplicativo fique no topo (em frente a outras janelas de outros aplicativos)

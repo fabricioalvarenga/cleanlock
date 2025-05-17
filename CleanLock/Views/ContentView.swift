@@ -10,10 +10,12 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject private var contentViewModel: ContentViewModel
     @EnvironmentObject private var inputManager: InputBlockingManager
-    
+    @EnvironmentObject private var accessibilityMonitor: AccessibilityMonitor
+
     @StateObject private var windowFocusMonitor = WindowFocusMonitor()
     
     @State private var path: [Route] = []
+    @State private var showAlert = false
     
     var body: some View {
         NavigationStack(path: $path) {
@@ -45,7 +47,8 @@ struct ContentView: View {
                 if isKeyWindow {
                     // Adiciona um pequeno atraso na checagem para evitar: 'Update NavigationRequestObserver tried to update multiple times per frame'
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        contentViewModel.checkAccessibilityPermission()
+                        showAlert = !accessibilityMonitor.checkAccessibilityPermission()
+                        
                     }
                 }
             }
@@ -66,12 +69,12 @@ struct ContentView: View {
                     }
                 }
             }
-            .alert(isPresented: $contentViewModel.showAccessibilityPermissionAlert) {
+            .alert(isPresented: $showAlert) {
                 Alert(
                     title: Text("Permissões Necessárias"),
                     message: Text("Este aplicativo precisa de permissão de acessibilidade para funcionar. Você será levado às Preferências do Sistema para conceder a permissão necessária."),
                     primaryButton: .default(Text("Abrir Preferências"),
-                                            action: { contentViewModel.openAccessibilityPreferences() }),
+                                            action: { accessibilityMonitor.openAccessibilityPreferences() }),
                     secondaryButton: .cancel(Text("Negar Permissão"),
                                              action: { NSApplication.shared.terminate(nil) }))
             }
