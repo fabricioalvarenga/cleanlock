@@ -36,10 +36,15 @@ struct ContentView: View {
                     KeyboardView(path: $path)
                 }
             }
+            .onAppear {
+                // Caso a janela do aplicativo seja fechada e reaberta, o app sempre retornar para a ContentView
+                // Então, é necessário garantir que a opacidade esteja definida corretamente
+                contentViewModel.setContentViewOpacity(1.0)
+            }
             .onChange(of: windowFocusMonitor.isKeyWindow) { _, isKeyWindow in
                 if isKeyWindow {
                     // Adiciona um pequeno atraso na checagem para evitar: 'Update NavigationRequestObserver tried to update multiple times per frame'
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                         contentViewModel.checkAccessibilityPermission()
                     }
                 }
@@ -47,7 +52,7 @@ struct ContentView: View {
             .onChange(of: inputManager.isCleaning) { _, isCleaning in
                 if isCleaning {
                     // Adiciona um pequeno atraso na checagem para evitar: 'Update NavigationRequestObserver tried to update multiple times per frame'
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                         contentViewModel.setContentViewOpacity(0.0)
                         contentViewModel.setKeyboardViewOpacity(1.0)
                     }
@@ -55,7 +60,7 @@ struct ContentView: View {
                     // Atrasa a transição entre as telas apenas para que o usuário
                     // possa perceber a mudança de cor dos botões Shift desenhados na tela
                     // E tambmém para evitar: 'Update NavigationRequestObserver tried to update multiple times per frame'
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                         contentViewModel.setContentViewOpacity(1.0)
                         contentViewModel.setKeyboardViewOpacity(0.0)
                     }
