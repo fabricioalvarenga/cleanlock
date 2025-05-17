@@ -10,6 +10,7 @@ import SwiftUI
 struct KeyboardView: View {
     @EnvironmentObject private var contentViewModel: ContentViewModel
     @EnvironmentObject private var inputManager: InputBlockingManager
+    
     @State private var horizontalSpaceBetweenKeys: CGFloat = .zero
     @State private var verticalSpaceBetweenKeys: CGFloat = .zero
     @State private var keyboardBackgroundWidth: CGFloat = .zero
@@ -47,9 +48,15 @@ struct KeyboardView: View {
         .navigationBarBackButtonHidden(true)
         .onChange(of: inputManager.areBothShiftKeysPressed) { _, pressed in
             if pressed {
-                inputManager.stopCleaning()
+                // Remover a view do path faz que com .onDisappear seja acionado
                 path.removeAll()
             }
+        }
+        .onDisappear {
+            // Caso a janela do aplicativo seja fechada e reaberta, por exemplo, o app sempre retornar para a ContentView
+            // Então, é necessário garantir que a interceptação dos eventos de teclado e trackpad seja interrompida
+            // Isso é feito simulando o pressionamento das teclas Shift, disparando as funções necessárias
+            inputManager.stopCleaning()
         }
     }
     
@@ -84,7 +91,7 @@ struct KeyboardView: View {
         .buttonStyle(PlainButtonStyle())
         .onChange(of: inputManager.isTrackpadPressed) { _, trackpadPressed in
             // Simula o pressionamento das teclas juntamente com 'scaleEffect' aplicado
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 inputManager.setTrackpadPressed(false)
             }
         }
@@ -154,7 +161,7 @@ struct KeyboardView: View {
 
             self.pressedKey = pressedKeyCode
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 self.pressedKey = nil
                 inputManager.setPressedKeyCodeValue(nil)
             }
