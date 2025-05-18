@@ -30,12 +30,13 @@ fileprivate func tapEventCallback(proxy: CGEventTapProxy,
         
         // Verifica se é um evento definido pelo sistema (systemDefined)
         // As teclas de brilho, volume e demais teclas de mídias são controladas por ese tipo de evento
-        if type == manager.systemDefinedEventType {
+        if type == manager.systemDefinedEventType { // Tipo de evento para interceptar Caps Lock e teclas de mídia
+            
             guard let nsEvent = NSEvent(cgEvent: event) else {
                 return Unmanaged.passRetained(event)
             }
             
-            if nsEvent.subtype.rawValue == 8 {
+            if nsEvent.subtype.rawValue == manager.midiaKeysEventSubtype { // Subtipo para interceptar teclas de mídia
                 // Alguns exemplos de data1:
                 // Backward Key Down: 0000 0000 0001 0100 0000 1010 0000 0000
                 // Backward Key Up  : 0000 0000 0001 0100 0000 1011 0000 0000
@@ -144,8 +145,11 @@ class InputBlockingManager: ObservableObject {
     
     private var cancellables = Set<AnyCancellable>()
     
-    // Tipo 14 é para eventos definidos pelo sistema (systemDefined) - teclas especiais (caps lock, volume, brilho, etc)
+    // CGEventType de valor 14 e NSEvent subtipo 8 servem para interceptar teclas de mídia
+    // A tecla Caps Lock também é interceptada pelo CGEventType de valor 14
     let systemDefinedEventType = CGEventType(rawValue: 14)!
+    // NSEvent subtipo 8 serve para interceptar o pressionamento das teclas de mídia
+    let midiaKeysEventSubtype = 8
     
     // Tamanhos relativos das teclas
     let standardKeyWidth: CGFloat = 1.0
