@@ -25,28 +25,38 @@ fileprivate func tapEventCallback(proxy: CGEventTapProxy,
     
     switch eventType {
     case .keyboard:
+        var keyCode = event.getIntegerValueField(.keyboardEventKeycode)
+        let flags = event.flags
+        
         // Verifica se é um evento definido pelo sistema (systemDefined)
         // As teclas de brilho, volume e demais teclas de mídias são controladas por ese tipo de evento
         if type == manager.systemDefinedEventType {
-            //            let data = event.getIntegerValueField(CGEventField(rawValue: 45)!)
+            guard let nsEvent = NSEvent(cgEvent: event) else {
+                return Unmanaged.passRetained(event)
+            }
             
-            //            let keyFlags = Int32((data & 0xFFFF0000) >> 16)
-            //            let keyData = (data & 0xFFFF)
-            //            let keyState = (keyFlags & 0xFF00) >> 8
-            
-            //            if ((keyData & 0xFF) == 7) || // Volume Up
-            //                ((keyData & 0xFF) == 8) || // Volume Down
-            //                ((keyData & 0xFF) == 3) { // Mute
-            //
-            //                let keyDown = keyState & 0x1
-            //                let keyCode = keyData & 0xFF
-            //
-            //                print("Tecla de Volume \(keyCode): \(keyDown == 1 ? "Pressionada" : "Liberada")")
-            //            }
+            if nsEvent.subtype.rawValue == 8 {
+                // Alguns exemplos de data1:
+                // Backward Key Down: 0000 0000 0001 0100 0000 1010 0000 0000
+                // Backward Key Up  : 0000 0000 0001 0100 0000 1011 0000 0000
+                // Play     Key Down: 0000 0000 0001 0000 0000 1010 0000 0000
+                // Play     Key Up  : 0000 0000 0001 0000 0000 1011 0000 0000
+                // Forward  Key Down: 0000 0000 0001 0011 0000 1010 0000 0000
+                // Forward  Key Up  : 0000 0000 0001 0011 0000 1011 0000 0000
+                
+                // Bits 8 a 15: Key down (0000 1010) e key up (0000 1011)
+                // Bits 16 a 23: APARENTEMENTE é código da tecla
+                
+                let data1 = Int64(nsEvent.data1)
+              
+                // Um detalhe muito importante: os códigos dessas teclas especiais coincidem com os códigos de teclas "normais"
+                // Então, para diferenciá-las, será somado 1.000 ao código delas
+                keyCode = (data1 & 0x0000000000FF0000) >> 16
+                keyCode += 1000
+                
+                manager.setPressedKeyCodeValue(keyCode)
+            }
         }
-        
-        let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
-        let flags = event.flags
         
         // Faz o tratamento de retorno para todas as teclas especiais
         if type == .flagsChanged {
@@ -155,8 +165,8 @@ class InputBlockingManager: ObservableObject {
     // Layout dos teclados ANSI EUA
     let keys: [[(Int64, String)]] =
     [
-        [(53, "esc"), (1001, "F1"), (1002, "F2"), (160, "F3"), (177, "F4"), (176, "F5"), (178, "F6"), (1003, "F7"),
-         (1004, "F8"), (1005, "F9"), (1006, "F10"), (1007, "F11"), (1008, "F12"), (1009, "on")],
+        [(53, "esc"), (1111, "F1"), (2222, "F2"), (160, "F3"), (177, "F4"), (176, "F5"), (178, "F6"), (1020, "F7"),
+         (1016, "F8"), (1019, "F9"), (1007, "F10"), (1001, "F11"), (1000, "F12"), (3333, "on")],
         
         [(50, "`"), (18, "1"), (19, "2"), (20, "3"), (21, "4"), (23, "5"), (22, "6"), (26, "7"),
          (28, "8"), (25, "9"), (29, "0"), (27, "-"), (24, "="), (51, "delete")],
