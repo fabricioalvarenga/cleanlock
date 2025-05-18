@@ -55,7 +55,11 @@ struct KeyboardView: View {
         .onChange(of: inputManager.areBothShiftKeysPressed) { _, pressed in
             if pressed {
                 // Remover a view do path faz que com .onDisappear seja acionado
-                path.removeLast()
+                // Além disso, um pequeno atraso é adicionado para que o usuário possa ver a mudança
+                // de cor provocada pelo pressionamento das duas teclas Shift
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    path.removeLast()
+                }
             }
         }
         .onDisappear {
