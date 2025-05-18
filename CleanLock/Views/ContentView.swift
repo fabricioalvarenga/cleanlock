@@ -72,7 +72,7 @@ struct ContentView: View {
             .alert(isPresented: $showAlert) {
                 Alert(
                     title: Text("Permissões Necessárias"),
-                    message: Text("Este aplicativo precisa de permissão de acessibilidade para funcionar. Você será levado às Preferências do Sistema para conceder a permissão necessária."),
+                    message: Text("Este aplicativo precisa de permissão de acessibilidade para conseguir bloquear o teclado e o trackpad. Você será levado às Preferências do Sistema para conceder a permissão necessária."),
                     primaryButton: .default(Text("Abrir Preferências"),
                                             action: { accessibilityMonitor.openAccessibilityPreferences() }),
                     secondaryButton: .cancel(Text("Negar Permissão"),
