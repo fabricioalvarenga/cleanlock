@@ -19,6 +19,9 @@ fileprivate func tapEventCallback(proxy: CGEventTapProxy,
         return Unmanaged.passRetained(event)
     }
     
+    let arrowDownKeyCode: Int64 = 125
+    let arrowUpKeyCode: Int64 = 126
+    let midiaKeysEventSubtype = 8 // NSEvent tipo .systemDefined e subtipo 8 ocorre no pressionamento das teclas de brilho, mídia e Caps Lock
     let eventInfo = Unmanaged<TapEventInfo>.fromOpaque(refcon).takeUnretainedValue()
     let eventType = eventInfo.eventType
     let manager = eventInfo.manager
@@ -28,38 +31,33 @@ fileprivate func tapEventCallback(proxy: CGEventTapProxy,
         var keyCode = event.getIntegerValueField(.keyboardEventKeycode)
         let flags = event.flags
         
-        // Verifica se é um evento definido pelo sistema (systemDefined)
-        // As teclas de brilho, volume e demais teclas de mídias são controladas por ese tipo de evento
-        if type == manager.systemDefinedEventType { // Tipo de evento para interceptar Caps Lock e teclas de mídia
-            
-            guard let nsEvent = NSEvent(cgEvent: event) else {
-                return Unmanaged.passRetained(event)
-            }
-            
-            if nsEvent.subtype.rawValue == manager.midiaKeysEventSubtype { // Subtipo para interceptar teclas de mídia
-                // Alguns exemplos de data1:
-                // Backward Key Down: 0000 0000 0001 0100 0000 1010 0000 0000
-                // Backward Key Up  : 0000 0000 0001 0100 0000 1011 0000 0000
-                // Play     Key Down: 0000 0000 0001 0000 0000 1010 0000 0000
-                // Play     Key Up  : 0000 0000 0001 0000 0000 1011 0000 0000
-                // Forward  Key Down: 0000 0000 0001 0011 0000 1010 0000 0000
-                // Forward  Key Up  : 0000 0000 0001 0011 0000 1011 0000 0000
-                
-                // Bits 8 a 15: Key down (0000 1010) e key up (0000 1011)
-                // Bits 16 a 23: APARENTEMENTE é código da tecla
-                
-                let data1 = Int64(nsEvent.data1)
-              
-                // Um detalhe muito importante: os códigos dessas teclas especiais coincidem com os códigos de teclas "normais"
-                // Então, para diferenciá-las, será somado 1.000 ao código delas
-                keyCode = (data1 & 0x0000000000FF0000) >> 16
-                keyCode += 1000
-                
-                manager.setPressedKeyCodeValue(keyCode)
-            }
+        // Teclas de brilho, mídia serão tratadas pelo tipo NSEvent
+        guard let nsEvent = NSEvent(cgEvent: event) else {
+            return Unmanaged.passRetained(event)
         }
         
-        // Faz o tratamento de retorno para todas as teclas especiais
+        if nsEvent.type == .systemDefined && nsEvent.subtype.rawValue == midiaKeysEventSubtype {
+            // Alguns exemplos de data1:
+            // Backward Key Down: 0000 0000 0001 0100 0000 1010 0000 0000
+            // Backward Key Up  : 0000 0000 0001 0100 0000 1011 0000 0000
+            // Play     Key Down: 0000 0000 0001 0000 0000 1010 0000 0000
+            // Play     Key Up  : 0000 0000 0001 0000 0000 1011 0000 0000
+            // Forward  Key Down: 0000 0000 0001 0011 0000 1010 0000 0000
+            // Forward  Key Up  : 0000 0000 0001 0011 0000 1011 0000 0000
+            
+            // Bits 8 a 15: Key down (0000 1010) e key up (0000 1011)
+            // Bits 16 a 23: APARENTEMENTE é código da tecla
+            let data1 = Int64(nsEvent.data1)
+            
+            // Um detalhe muito importante: os códigos dessas teclas especiais coincidem com os códigos de teclas "normais"
+            // Então, para diferenciá-las, será somado 1.000 ao código delas
+            keyCode = (data1 & 0x0000000000FF0000) >> 16
+            keyCode += 1000
+            
+            manager.setPressedKeyCodeValue(keyCode)
+        }
+            
+        // Faz o tratamento para teclas especiais
         if type == .flagsChanged {
             if keyCode == 56 || keyCode == 60 { // Teclas Shift (esquerda e direita)
                 switch keyCode {
@@ -87,8 +85,8 @@ fileprivate func tapEventCallback(proxy: CGEventTapProxy,
         // pois as duas estão desenhadas na mesma tecla no teclado virtual
         // Do contrário, retorna o código de qualquer outra tecla que tenha sido pressionada
         if type == .keyDown {
-            if keyCode == 126 {
-                manager.setPressedKeyCodeValue(125)
+            if keyCode == arrowUpKeyCode {
+                manager.setPressedKeyCodeValue(arrowDownKeyCode)
             } else {
                 manager.setPressedKeyCodeValue(keyCode)
             }
@@ -145,11 +143,8 @@ class InputBlockingManager: ObservableObject {
     
     private var cancellables = Set<AnyCancellable>()
     
-    // CGEventType de valor 14 e NSEvent subtipo 8 servem para interceptar teclas de mídia
-    // A tecla Caps Lock também é interceptada pelo CGEventType de valor 14
-    let systemDefinedEventType = CGEventType(rawValue: 14)!
-    // NSEvent subtipo 8 serve para interceptar o pressionamento das teclas de mídia
-    let midiaKeysEventSubtype = 8
+    // Intercepta eventos de pressionamento das teclas de brilho e mídia
+    let systemDefinedCGEventType = CGEventType(rawValue: 14)!
     
     // Tamanhos relativos das teclas
     let standardKeyWidth: CGFloat = 1.0
@@ -169,7 +164,7 @@ class InputBlockingManager: ObservableObject {
     // Layout dos teclados ANSI EUA
     let keys: [[(Int64, String)]] =
     [
-        [(53, "esc"), (1111, "F1"), (2222, "F2"), (160, "F3"), (177, "F4"), (176, "F5"), (178, "F6"), (1020, "F7"),
+        [(53, "esc"), (1003, "F1"), (1002, "F2"), (160, "F3"), (177, "F4"), (176, "F5"), (178, "F6"), (1020, "F7"),
          (1016, "F8"), (1019, "F9"), (1007, "F10"), (1001, "F11"), (1000, "F12"), (3333, "on")],
         
         [(50, "`"), (18, "1"), (19, "2"), (20, "3"), (21, "4"), (23, "5"), (22, "6"), (26, "7"),
@@ -255,8 +250,7 @@ class InputBlockingManager: ObservableObject {
         CGEventMask(1 << CGEventType.keyUp.rawValue) |
         CGEventMask(1 << CGEventType.flagsChanged.rawValue)
         
-        // Eventos definidos pelo sistema (systemDefined) para teclas especiais (volume, brilho, etc)
-        eventMask = eventMask | (1 << systemDefinedEventType.rawValue)
+        eventMask = eventMask | (1 << systemDefinedCGEventType.rawValue)
         
         // Cria estrutura de informações do evento para que o mesmo callback
         // possa identificar se se trata de um evento de teclado ou trackpad
