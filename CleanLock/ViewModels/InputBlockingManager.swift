@@ -146,21 +146,6 @@ class InputBlockingManager: ObservableObject {
     // Intercepta eventos de pressionamento das teclas de brilho e mídia
     let systemDefinedCGEventType = CGEventType(rawValue: 14)!
     
-    // Tamanhos relativos das teclas
-    let standardKeyWidth: CGFloat = 1.0
-    let specialKeyWidths: [String: CGFloat] = [
-        "esc": 1.6,
-        "delete": 1.6,
-        "tab": 1.6,
-        "caps": 1.875,
-        "return": 1.875,
-        "shift l": 2.45,
-        "shift r": 2.45,
-        "command l": 1.3,
-        "command r": 1.3,
-        "": 5.6,  // Barra de espaço
-    ]
-    
     // Layout dos teclados ANSI EUA
     let keys: [[(Int64, String)]] =
     [

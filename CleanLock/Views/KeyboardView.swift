@@ -25,6 +25,21 @@ struct KeyboardView: View {
     
     @Binding var path: [Route]
     
+   // Tamanhos relativos das teclas
+    let standardKeyWidth: CGFloat = 1.0
+    let specialKeyWidths: [String: CGFloat] = [
+        "esc": 1.6,
+        "delete": 1.6,
+        "tab": 1.6,
+        "caps": 1.875,
+        "return": 1.875,
+        "shift l": 2.45,
+        "shift r": 2.45,
+        "command l": 1.3,
+        "command r": 1.3,
+        "": 5.6,  // Barra de espaço
+    ]
+    
     var body: some View {
         GeometryReader { geometry in
             // Atualiza as medidas relativas utilizadas nas views
@@ -144,7 +159,7 @@ struct KeyboardView: View {
     @ViewBuilder
     func keyButton(keyCode: Int64) -> some View {
         let keyString = inputManager.findKeyLabel(for: keyCode)!
-        let keyWidthScaleFactor = inputManager.specialKeyWidths[keyString] ?? inputManager.standardKeyWidth
+        let keyWidthScaleFactor = specialKeyWidths[keyString] ?? standardKeyWidth
 
         Button {
         } label: {
