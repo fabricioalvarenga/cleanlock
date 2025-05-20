@@ -130,7 +130,6 @@ class InputBlockingManager: ObservableObject {
     @Published var isRightShiftKeyPressed = false
     
     @Published private(set) var isCleaning = false
-    @Published private(set) var areBothShiftKeysPressed = false
     @Published private(set) var isTrackpadPressed = false
     @Published private(set) var pressedKeyCode: Int64?
 
@@ -145,6 +144,10 @@ class InputBlockingManager: ObservableObject {
     
     // Intercepta eventos de pressionamento das teclas de brilho e mídia
     let systemDefinedCGEventType = CGEventType(rawValue: 14)!
+    
+    var areBothShiftKeysPressed: Bool {
+        isLeftShiftKeyPressed && isRightShiftKeyPressed
+    }
     
     // Layout dos teclados ANSI EUA
     let keys: [[(Int64, String)]] =
@@ -169,19 +172,12 @@ class InputBlockingManager: ObservableObject {
     ]
     
     init() {
-        Publishers.CombineLatest($isLeftShiftKeyPressed, $isRightShiftKeyPressed)
-            .map { $0 && $1 }
-            .assign(to: \.areBothShiftKeysPressed, on: self)
-            .store(in: &cancellables)
-        
         $isCleaning
             .map(\.self)
             .sink { [weak self] isCleaning in
             if isCleaning {
                 self?.startMonitoring()
             } else {
-                self?.isLeftShiftKeyPressed = false
-                self?.isRightShiftKeyPressed = false
                 self?.stopMonitoring()
             }
         }
@@ -306,6 +302,9 @@ class InputBlockingManager: ObservableObject {
             CFRunLoopRemoveSource(CFRunLoopGetCurrent(), keyboardRunLoopSource, .commonModes)
         }
         
+        isLeftShiftKeyPressed = false
+        isRightShiftKeyPressed = false
+
         keyboardTapLockEvent = nil
         keyboardRunLoopSource = nil
     }
